@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>{--$page.name--} — Блог — Панель Администратора — {--$smarty.config.site_name--}</title>
+		<meta name="author" content="Илья Черемушкин">
+		<meta name="resourse-type" content="Document">
+		<meta http-equiv="charset" content="UTF-8">
+		<meta http-equiv="content-language" content="ru">
+		
+		<script src="/scripts.js"></script>
+		<script src="/ajax.js"></script>
+		<link rel="stylesheet" type="text/css" href="/styles.css">
+		<link href="/imgs/favicon.ico" rel="shortcut icon" type="image/x-icon">
+	</head>
+	<body>
+		<!-- header {--$admin.header--}-->
+
+		<!-- code -->
+		<section>
+
+			<!-- left blocks {--$admin.blocks--}-->
+
+			<!-- content -->
+			{--strip--}
+			<content>
+				{--$admin.content--}
+			</content>
+			{--/strip--}
+			
+			<div id="clear"></div>
+
+		</section>
+
+		<!-- footer {--$admin.footer--}-->
+		
+		<!-- scripts {--$admin.scripts--}-->
+	</body>
+</html>

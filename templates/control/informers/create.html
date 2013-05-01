@@ -1,0 +1,37 @@
+<div>
+	<h2>Создание информера. Первый этап</h2>
+	<p>На этом этапе Вам предлагается дать имя и описание новому информеру.
+	Английское имя нужно лишь для идентификации в системе, но Вы, в основном, будете иметь дело только с русским названием.
+	Описание выводится только в панели управления.</p>
+</div>
+<br>
+<form onsubmit="Utils.ajax.classes.admin.informers.create(this); return false;">
+	<table class="markup" style="width: 100%;">
+		<tr>
+			<th style="width: 15%;">название (англ):</th>
+			<td>
+				<input type="text" name="name">
+			</td>
+		</tr>
+		<tr>
+			<th>название (рус):</th>
+			<td>
+				<input type="text" name="rus">
+			</td>
+		</tr>
+		<tr>
+			<th>описание:</th>
+			<td>
+				<input type="text" name="description" style="width: 100%;">
+			</td>
+		</tr>
+		<tr>
+			<th></th>
+			<td>
+				<button>
+					<img src="/templates/admin/imgs/login.png" alt="Log in">Вход
+				</button>
+			</td>
+		</tr>
+	</table>
+</form>

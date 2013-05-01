@@ -1,0 +1,34 @@
+{--strip--}
+<article>
+	{--$article.moderation--}
+	<h2><a href="{--$article.url--}">{--$article.title--}</a></h2>
+	
+	<div class="text">
+		{--$article.texts.short--}
+		
+		{--if $article.cut--}
+			<div class="read">
+				<button onclick="location.href = '{--$article.url--}';"><img src="/imgs/read.png" alt="{--$article.title--}" style="vertical-align:middle; margin-right:5px;">Читать</button>
+			</div>
+		{--/if--}
+	</div>
+	<div class="details">
+		{--$article.rating.form--}
+		
+		<span class="date">
+			<img src="/imgs/date.png" alt="Дата" style="vertical-align:middle;">
+			<span class="value">{--$article.date--}</span>
+		</span>
+		
+		<span class="comments">
+			<img src="/imgs/comments.png" alt="Комментарии" style="vertical-align:middle;">
+			<span class="value">{--$article.comments--}</span>
+		</span>
+		
+		<span class="views">
+			<img src="/imgs/views.png" alt="Просмотры" style="vertical-align:middle;">
+			<span class="value">{--$article.views--}</span>
+		</span>
+	</div>
+</article>
+{--/strip--}

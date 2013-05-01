@@ -1,0 +1,15 @@
+{--strip--}
+<div class="switchers">
+	{--for $i = 1 to $switchers.number--}
+		{--if ($i == $switchers.active)--}
+			<span class="active switcher">
+				{--$i--}
+			</span>
+		{--else--}
+			<a href="{--$switchers.link--}{--$i--}" title="Страница {--$i--}" class="standart switcher">
+				{--$i--}
+			</a>
+		{--/if--}
+	{--/for--}
+</div>
+{--/strip--}

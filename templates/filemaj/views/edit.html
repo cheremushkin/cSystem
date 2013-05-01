@@ -1,0 +1,15 @@
+{strip}
+<h2>Редактирование</h2>
+<p>Файл по адресу <mark>{$file.path.relative}</mark>.</p>
+<p>Размер файла составляет <mark>{$file.filesize} Kb</mark>.</p>
+<p>Дата последнего изменения — <mark>{$file.filemtime}</mark>.</p>
+<br>
+<form onsubmit="Utils.ajax.classes.filemaj.saveSourceCode(this, '{$file.path.relative}'); return false;">
+	<div id="ace-editor" class="ace-editor">{$file.source}</div>
+	<div style="text-align:center; margin-top:25px;">
+		<button>
+			<img src="/imgs/floppy.png" alt="Floppy">Сохранить
+		</button>
+	</div>
+</form>
+{/strip}

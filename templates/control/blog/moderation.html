@@ -1,0 +1,8 @@
+{--strip--}
+{--if $is.admin--}
+	<div class="moderation">
+		<a href="/blog/edit/{--$article.id--}"><img src="/imgs/edit.png" alt="Edit" style="vertical-align:middle;"></a>
+		<span onclick="if (confirm('Удалить? Вы хорошо подумали?')) {Ajax.blog.remove('{--$article.module.name--}', 'remove', {--$article.id--})};" style="margin-left:5px;"><img src="/imgs/false.png" alt="Delete" style="vertical-align:middle;"></span>
+	</div>
+{--/if--}
+{--/strip--}

@@ -62,12 +62,6 @@
 		
 		// launch a program and receive a template
         abstract function launch();
-
-		// local AJAX controller
-		function ajax($data) {
-            $method = $data->method;
-            return $this->$method($data);
-        }
 	};
 
     /**

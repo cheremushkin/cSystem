@@ -1,0 +1,39 @@
+{--strip--}
+<article>
+	{--$article.moderation--}
+	<h2>{--$article.title--}</h2>
+	<div class="tags">
+		<img src="/imgs/tags.png" alt="Теги" style="vertical-align:middle;">
+		{--for $i = 0 to $article.tags.number - 1--}
+			<span class="value">
+				<a href="/blog/search/{--$article.tags[$i].url--}/" title="{--$article.tags[$i].name--}">{--$article.tags[$i].name--}</a>
+				{--if ($i != $article.tags.number - 1)--}, {--/if--}
+			</span>
+		{--/for--}
+	</div>
+	
+	<div class="text">
+		{--$article.texts.full--}
+	</div>
+	<div class="details">
+		{--$article.rating.form--}
+		
+		<span class="date">
+			<img src="/imgs/date.png" alt="Дата" style="vertical-align:middle;">
+			<span class="value">{--$article.date--}</span>
+		</span>
+		
+		<span class="comments">
+			<img src="/imgs/comments.png" alt="Комментарии" style="vertical-align:middle;">
+			<span class="value">{--$article.comments--}</span>
+		</span>
+		
+		<span class="views">
+			<img src="/imgs/views.png" alt="Просмотры" style="vertical-align:middle;">
+			<span class="value">{--$article.views--}</span>
+		</span>
+	</div>
+</article>
+
+{--$comments--}
+{--/strip--}

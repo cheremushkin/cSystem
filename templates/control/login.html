@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>{$global.title}</title>
+		
+		<script src="/templates/utils.js"></script>
+		<script src="/templates/control/ajax.js"></script>
+		
+		<link rel="stylesheet" href="/templates/control/styles.css">
+	</head>
+	<body>
+		<div id="login">
+			<form onsubmit="Utils.ajax.classes.control.login(this); return false;" class="right">
+				<table class="markup">
+					<tr>
+						<th></th>
+						<td>
+							<img src="/captcha?count=6&width=200&height=30&min=18&max=24&start=15&background=252,252,252" alt="CAPTCHA" id="captcha" onclick="this.src = '/captcha?count=6&width=200&height=30&min=18&max=24';">
+						</td>
+					</tr>
+					<tr>
+						<th>captcha:</th>
+						<td>
+							<input type="text" name="captcha" maxlength="6" autocomplete="off">
+						</td>
+					</tr>
+					<tr>
+						<th>nickname:</th>
+						<td>
+							<input type="text" name="nickname" autocomplete="off">
+						</td>
+					</tr>
+					<tr>
+						<th>password:</th>
+						<td>
+							<input type="password" name="password" autocomplete="off">
+						</td>
+					</tr>
+					<tr>
+						<th></th>
+						<td>
+							<button>
+								<img src="/templates/control/imgs/login.png" alt="Log in">Вход
+							</button>
+						</td>
+					</tr>
+				</table>
+			</form>
+			
+			<div>
+				<h2>Вход</h2>
+				<p>Для входа в Панель Управления системы cSystem введите код, изображенный на картинке и пароль.</p>
+			</div>
+			
+			<div style="clear: both;"></div>
+		</div>
+		
+		<script>
+			var div = document.getElementById('login');
+			div.style.position = 'relative';
+			div.style.top = (window.innerHeight / 2 - div.offsetHeight / 2 - 100) + 'px';
+			div.style.left = (window.innerWidth / 2 - div.offsetWidth / 2) + 'px';
+		</script>
+	</body>
+</html>

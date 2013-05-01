@@ -475,7 +475,8 @@
 			
 			// launch (with exception handler)
 			try {
-				$answer = $instance->ajax($data);
+                $method = $data->method;
+				$answer = $instance->$method($data);
 			} catch (Exception $exception) {
 				$answer = array(
 					'message' => $exception->getMessage(),

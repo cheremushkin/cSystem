@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>{$title}</title>
+		
+		<script src="/templates/utils.js"></script>
+		<script src="/templates/control/ajax.js"></script>
+		<script src="/templates/filemaj/ajax.js"></script>
+		<script src="http://d1n0x3qji82z53.cloudfront.net/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+		
+		<link rel="stylesheet" href="/templates/control/styles.css">
+	</head>
+	<body>
+		<div id="wrapper">
+			<aside>
+				{strip}
+				<div class="block">
+					<nav>
+						<a href="/control">Главная</a>
+						<a href="#general">Настройки</a>
+						{foreach $control.classes as $class}
+							<a href="#{$class.name}">{$class.rus}</a>
+						{/foreach}
+						<a href="/control/informers">Информеры</a>
+					</nav>
+				</div>
+				{/strip}
+				
+				{strip}
+				<div id="filemaj" class="block justify">
+					{$control.filemaj}
+				</div>
+				{/strip}
+				
+				{strip}
+				<div class="block">
+					<nav>
+						<form onsubmit="Utils.ajax.classes.control.logout(); return false;">
+							<div class="justify">
+								Вы можете выйти из Панели Управления.
+								Так же Вы автоматически выходите в случае, если не совершали никаких действий (переход по страницам, изменение настроек, сохранение кода) в течение 30 минут. 
+							</div>
+							<br>
+							<button>
+								<img src="/templates/control/imgs/logout.png" alt="Log out">Выход
+							</button>
+						</form>
+					</nav>
+				</div>
+				{/strip}
+			</aside>
+		
+			<section id="section">
+				<header>
+					<h1>Управление cSystem</h1>
+					<div class="description">Настройка системы управления содержимым, построенной по модульному принципу и включающей в себя множество плюшек.</div>
+				</header>
+				
+				<content id="content">
+					<h2>Предисловие</h2>
+					<p>Приветствую вас на главной странице Панели Управления CMS cSystem!
+					Система построена по модульному принципу и, даже это место является модулем системы.
+					Большим и хорошо продуманным модулем.
+					Вы можете сами вносить изменения в его функционал, изменять его и дополнять.</p>
+					<br>
+					<p>Предположим, вы создали свой модуль для CMS, например, каталог файлов.
+					Не удобно будет все время редактировать тексты страниц с файлами, названия категорий и другое через phpMyAdmin (а некоторые вообще не знают, что это).
+					Поэтому, для модуля можно будет написать функции, с помощью которых вам будет удобно им управлять.
+					Эти функции будут автоматически загружаться в этой Панели Управления.
+					Я уверен, если вы смогли написать модуль для системы, то и пару функций вы с легкостью осилите.</p>
+					<br>
+					<p>Если Вы не умеете писать скрипты на языке программирования PHP, а просто хотите использовать уже готовый функционал, то с этим не будет никаких проблем.
+					На многих, уже существующих страницах Панели Управления, есть подробные описания.</p>
+					<br>
+					<p>Предлагаю Вам выбрать модуль или плагин, с которым вы хотите работать в правом меню.
+					Также вы можете перейти на страницу глобальных настроек сайта или на страницу просмотра и настройки информеров (информеры — большая и очень функциональная часть сайта, информацию о которой вы найдете на главной странице информеров в Панели Управления).</p>
+				</content>
+				
+				<footer>
+					cSystem © Илья Черемушкин. Создано в 2012 году путем бессонных ночей и кропотливой работы.
+				</footer>
+			</section>
+			
+			<div style="clear: both;"></div>
+		</div>
+	</body>
+</html>

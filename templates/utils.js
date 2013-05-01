@@ -150,6 +150,7 @@ Utils = {
 					params.timeout && clearTimeout(params.timeout);
 					
 					// parse the response and transmission to handler
+                   alert(request.responseText);
 					var response = JSON.parse(request.responseText);
 					params.success && params.success(response);
 				} else {

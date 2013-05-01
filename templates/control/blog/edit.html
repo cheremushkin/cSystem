@@ -1,0 +1,25 @@
+{--strip--}
+<div class="edit">
+	<form class="form" name="form" onsubmit="Ajax.blog.edit('{--$module.name--}', 'edit', this, '{--$article.id--}'); return false;">
+		<input type="text" name="title" style="width:400px;" value="{--$article.title--}">
+		<br><br>
+		<div class="categories" name="categories">
+			{--$categories--}
+		</div>
+		<br>
+		{--include 'global/html-codes.html' textarea='text'--}
+		<textarea id="text" class="text" name="text" rows="25">{--$article.text--}</textarea>
+		<br>
+		<input type="text" name="tags" style="width:100%;" value="{--strip--}
+			{--for $i = 0 to $article.tags.number - 1--}
+				{--$article.tags[$i].name--}
+				{--if ($i != $article.tags.number - 1)--}, {--/if--}
+			{--/for--}
+		{--/strip--}">
+		<br><br>
+		<div style="text-align:center;">
+			<button><img src="/imgs/edit.png" alt="Edit" style="vertical-align:middle; margin-right:5px;">Редактировать</button>
+		</div>
+	</form>
+</div>
+{--/strip--}

@@ -1,0 +1,38 @@
+{strip}
+<table id="filemaj-table">
+	<tr id="filemaj-line-header">
+		<td class="first">Элемент</td>
+		<td class="second">Операции</td>
+	</tr>
+	
+	{foreach $filemaj.content as $element}
+		<tr id="filemaj-line-{$element.number}">
+			<td id="filemaj-line-{$element.number}-field-1" class="first">
+				<img src="{$element.logo}" alt="{$element.type|capitalize}">
+				{if ($element.type == 'parent' || $element.type == 'folder')}
+					<span class="folder" onclick="Utils.ajax.classes.filemaj.cd('{$element.path.relative}', 'filemaj')" title="{$element.path.relative}">{$element.basename}</span>
+				{else if $element.link}
+					<a href="{$element.path.relative}">{$element.basename}</a>
+				{else}
+					{$element.basename}
+				{/if}
+			</td>
+			<td id="filemaj-line-{$element.number}-field-2" class="second">
+				{if $element.operations}
+					{$element.operations}
+				{/if}
+			</td>
+		</tr>
+	{/foreach}
+	
+	<tr id="filemaj-line-basket">
+		<td id="filemaj-line-basket-field-1" class="first" style="background: #eee;">
+			<img src="/templates/filemaj/operations/basket/basket.png" alt="Basket">
+			Basket
+		</td>
+		<td id="filemaj-line-basket-field-1" class="second" style="background: #eee;">
+			<img src="/templates/filemaj/operations/basket/open.png" alt="Open" onclick="Utils.ajax.filemaj.getBasketTemplate('section', 'content')">
+		</td>
+	</tr>
+</table>
+{/strip}
