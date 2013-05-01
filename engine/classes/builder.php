@@ -42,12 +42,16 @@
         function build($class) {
             // receive information about class from DB and save it
             $name = ucfirst(strtolower($class));
-            $this->information($name);
+            $information = $this->information($name);
 
 
             // get instance and check
             $instance = new $name();
             if (!$instance instanceof Level) throw new Exception("Given class must implement interface “Level“.");
+
+
+            // also create an array in Smarty for this class
+            $this->registry->get("smarty")->assign(strtolower($name), ['information' => $information]);
 
             return $instance;
         }

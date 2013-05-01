@@ -73,17 +73,14 @@
 			
 			
 			// list of classes that will be used everywhere
-			$statement = $this->database->prepare("SELECT * FROM system_classes WHERE name != :name");
-            $statement->bindValue(":name", $this->information['name']); $statement->execute();
-            $classes = $statement->fetchAll(PDO::FETCH_ASSOC);
-			$this->smarty->assign($this->information['name'], ['classes' => $classes]);
+			$this->smarty->append($this->information['name'], ['classes' => $this->classes()], true);
 			
-			
+
 			// FileMAJ block will be used everywhere
 			$this->filemaj();
 			
 			
-			// in case of the main page we should prepare title
+			// in case of the main page we should prepare the title
 			if (empty($this->url[1])) {
 				$this->title();
 				return $this->smarty->fetch("{$this->information['folder']}/main.html");
@@ -133,7 +130,7 @@
          */
 
         function permissions() {
-			return !empty($_SESSION['admin']['logged']) && $_SESSION['admin']['logged'] === true && $this->activity() ? true : false;
+            return !empty($_SESSION['admin']['logged']) && $_SESSION['admin']['logged'] === true && $this->activity() ? true : false;
 		}
 
 
@@ -147,7 +144,7 @@
 
         private function activity() {
 			// if inactivity time has ended, person will be logout
-			if (time() - $_SESSION['admin']['time'] > $this->settings['classes'][$this->information['name']]['settings']['inactivity']) {
+			if (time() - $_SESSION['admin']['time'] > $this->settings['classes'][$this->information['name']]['security']['inactivity']) {
 				unset($_SESSION['admin']);
 				$this->sessionStop();
 				return false;
@@ -162,7 +159,7 @@
 
 
         /**
-         * Crypts a password with Blofish algorithm.
+         * Crypts a password with Blowfish algorithm.
          *
          * @param $nickname
          * @param $password
@@ -192,24 +189,46 @@
          */
 
         private function authentication($nickname, $password) {
-			// get ID using a PDOStatement
-			$statement = $this->database->prepare("SELECT id FROM {$this->information['table']} WHERE nickname = :nickname");
+            // get ID using a PDOStatement
+            $statement = $this->database->prepare("
+			    SELECT id
+			    FROM {$this->information['table']}
+			    WHERE nickname = :nickname
+			");
             $statement->bindValue(":nickname", $nickname); $statement->execute();
             $id = $statement->fetchColumn();
-			if ($id) throw new Exception("This user does not exist.", 21);
-			
-			
-			// check password using a PDOStatement
-			$password = $this->blowfish($nickname, $password);
-			$result = $this->database->query("SELECT * FROM {$this->information['table']} WHERE id = $id && password = '$password'");
-			if (!$result->num_rows) throw new Exception("You have an error in the password.", 22);
+            if (!$id) throw new Exception("This user does not exist.", 21);
 
-            $statement = $this->database->prepare("SELECT COUNT(*) FROM {$this->information['table']} WHERE id = $id && password = :password");
-            $statement->bindValue(":password", $password); $statement->execute();
-            if ($statement->fetchColumn()) throw new Exception("This user does not exist.", 21);
-			
-			return $id;
-		}
+
+            // check password using a PDOStatement
+            $password = $this->blowfish($nickname, $password);
+            $statement = $this->database->prepare("
+                SELECT COUNT(*)
+                FROM {$this->information['table']}
+                WHERE id = :id && password = :password
+            ");
+            $statement->bindValue(":id", $id); $statement->bindValue(":password", $password); $statement->execute();
+            if (!$statement->fetchColumn()) throw new Exception("You have an error in the password.", 22);
+
+            return $id;
+        }
+
+
+
+
+        /**
+         * Finds all classes from database except this one.
+         *
+         * @return array
+         * Assoc array with classes.
+         */
+
+        private function classes() {
+            // prepare PDOStatement, bind, execute and return a result
+            $statement = $this->database->prepare("SELECT * FROM system_classes WHERE name != :name");
+            $statement->bindValue(":name", $this->information['name']); $statement->execute();
+            return $statement->fetchAll(PDO::FETCH_ASSOC);
+        }
 
 
 
@@ -326,8 +345,8 @@
 			$captcha = empty($data->captcha) || empty($_SESSION['captcha']) || $_SESSION['captcha'] != $data->captcha ? false : true;
 			unset($_SESSION['captcha']);
 			if (!$captcha) {
-				//$this->sessionStop();
-				//throw new Exception("The wrong security code has been given.", 702);
+				$this->sessionStop();
+				throw new Exception("The wrong security code has been given.", 702);
 			};
 			
 			
@@ -355,7 +374,7 @@
 			);
 			
 			return array(
-				'message' => "User $nickname successfully logged in.",
+				'message' => "User successfully logged in. Nickname: $nickname.",
 				'code' => 200,
                 'log' => true
 			);

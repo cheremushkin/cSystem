@@ -229,7 +229,7 @@
 			
 			
 			// receive a PDOStatement object with data
-			$result = $this->database->query("SELECT * FROM feature_informers ORDER BY id");
+			$result = $this->database->query("SELECT * FROM system_informers ORDER BY id");
 			
 			// final array for informers
 			$informers = array();
@@ -274,7 +274,7 @@
             // array that contains all .ini-settings
             $settings = array(
                 'classes' => array(),
-                'features' => array()
+                'informers' => array()
             );
 
 
@@ -330,50 +330,21 @@
 
 
 
-            // get all features
-            $statements['features'] = $this->database->query("
-                SELECT id, name
-                FROM system_features
-                ORDER BY id
-            ");
-            $features = $statements['features']->fetchAll(PDO::FETCH_ASSOC);
-
-
-            // prepare PDOStatement with sections
-            $statements['sections'] = $this->database->prepare("
-                SELECT DISTINCT section
-                FROM system_features_settings
-                WHERE feature = :feature
+            // get sections of informers
+            $statement = $this->database->query("
+                SELECT *
+                FROM system_informers_settings
+                ORDER BY section
             ");
 
 
-            // do a loop for create an array
-            foreach ($features as $feature) {
-                // create an array for this feature
-                $settings['features'][$feature['name']] = array();
+            while ($setting = $statement->fetch(PDO::FETCH_ASSOC)) {
+                // check if this section is first
+                if (empty($settings['informers'][$setting['section']])) $settings['informers'][$setting['section']] = array();
 
 
-                // bind a value, execute and prepare a PDOStatement for settings
-                $statements['sections']->bindValue(":feature", $feature['id']); $statements['sections']->execute();
-                $statements['settings'] = $this->database->prepare("
-                    SELECT field, value
-                    FROM system_features_settings
-                    WHERE feature = :feature AND section = :section
-                "); $statements['settings']->bindValue(":feature", $feature['id']);
-
-
-                while ($section = $statements['sections']->fetchColumn()) {
-                    // prepare an array for values
-                    $settings['features'][$feature['name']][$section] = array();
-
-
-                    // bind value, execute and fill an array using a loop
-                    $statements['settings']->bindValue(":section", $section); $statements['settings']->execute();
-
-                    while ($setting = $statements['settings']->fetch(PDO::FETCH_ASSOC)) {
-                        $settings['features'][$feature['name']][$section][$setting['field']] = $setting['value'];
-                    };
-                };
+                // add the new value
+                $settings['informers'][$setting['section']][$setting['field']] = $setting['value'];
             };
 
 

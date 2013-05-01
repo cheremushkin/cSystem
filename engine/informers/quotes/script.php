@@ -27,7 +27,7 @@
             // prepare a PDOStatement
             $result = $this->database->query("
                 SELECT *
-                FROM feature_informers_quotes
+                FROM informer_quotes
             ");
             $quotes = $result->fetchAll(PDO::FETCH_ASSOC);
 
