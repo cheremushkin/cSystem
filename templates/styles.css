@@ -1,0 +1,389 @@
+/* Display */
+header, nav, section, aside, article, footer {
+    display: block;
+}
+
+
+
+/* Fonts */
+@font-face {
+    font-family: Antipasto;
+    src: url('/fonts/Antipasto.otf');
+}
+@font-face {
+    font-family: Webly;
+    src: url('/fonts/Webly.ttf');
+}
+
+
+
+/* Body */
+body {
+    background: #fcfcfc;
+    color: #333;
+    font-size: 11pt;
+    font-family: Webly;
+    line-height: 20px;
+    letter-spacing: 1px;
+    margin: 0;
+    padding: 0;
+}
+body * {
+    font: inherit;
+    line-height: 20px;
+    margin: 0;
+    padding: 0;
+    border: none;
+    outline: none;
+    box-sizing: border-box;
+    vertical-align: bottom;
+}
+
+
+
+/* Links */
+a {
+    color: #68afb4;
+    text-decoration: none;
+
+    -webkit-transition: color 0.2s ease;
+    -o-transition: color 0.2s ease;
+    -moz-transition: color 0.2s ease;
+}
+a:hover {
+    color: #333;
+}
+
+
+
+/* Classes */
+.right {
+    float: right;
+    margin-left: 20px;
+}
+
+.left {
+    float: left;
+    margin-right: 20px;
+}
+
+.top {
+    margin-top: 10px;
+}
+
+.justify {
+    text-align: justify;
+}
+
+.center {
+    text-align: center;
+}
+
+.red {
+    color: red;
+}
+
+.green {
+    color: green;
+}
+
+.hide {
+    display: none;
+}
+
+.pointer {
+    cursor: pointer;
+}
+
+
+
+/* Header */
+header {
+    width: 100%;
+    background: #e8e8e8;
+}
+
+#header {
+    width: 1000px;
+    margin: 0 auto;
+    padding: 2px 0;
+    font-family: Antipasto;
+    text-transform: uppercase;
+}
+
+#header nav {
+    float: right;
+    font-size: 9pt;
+}
+
+#header a {
+    color: #333;
+    margin-right: 10px;
+    background: none;
+    padding: 0;
+}
+#header a:last-of-type {
+    margin: 0;
+}
+#header a:hover {
+    color: #68afb4;
+}
+
+
+
+/* Blockquote */
+#quote {
+    width: 100%;
+    background: #f5f5f5;
+    border-bottom: 1px solid #eee;
+}
+
+#quote div {
+    padding: 10px 0;
+    text-align: center;
+}
+#quote div .author {
+    display: block;
+    font-style: italic;
+}
+
+
+
+/* Content */
+#content {
+    width: 1000px;
+    margin: 50px auto;
+    padding: 0;
+}
+
+
+
+
+/* Text formatting */
+p {
+    text-align: justify;
+    text-indent: 20px;
+}
+
+hr {
+    display: block;
+    background: #ccc;
+    height: 1px;
+}
+
+mark {
+    background: #eee;
+    padding: 1px 5px;
+}
+
+code {
+    display: inline;
+    background: #eee;
+    padding: 1px 5px;
+}
+
+
+
+/* Headers */
+h2 {
+    font-size: 14pt;
+    text-align: center;
+    font-family: Antipasto;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    border-top: 1px solid #eee; border-bottom: 1px solid #eee;
+    padding: 20px;
+    background: #fcfcfc;
+    text-shadow: 1px 1px 1px #fff;
+}
+h3 a {
+    color: #333;
+}
+h3 a:hover {
+    color: #68afb4;
+}
+
+h3 {
+    font-size: 14pt;
+    font-family: Antipasto;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    border-top: 1px solid #eee; border-bottom: 1px solid #eee;
+    padding: 10px;
+    background: #f8f8f8;
+    text-shadow: 1px 1px 1px #fff;
+}
+h3 a {
+    color: #333;
+}
+h3 a:hover {
+    color: #68afb4;
+}
+
+h4 {
+    font-size: 11pt;
+    font-family: Antipasto;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+
+
+
+
+/* Stylized images */
+.image .frame {
+    background: #fafafa;
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: center;
+    display: inline-block;
+}
+.image .alt {
+    color: #888;
+    font-size: 10pt;
+    font-style: italic;
+    text-align: center;
+}
+
+
+
+/* Lists */
+ul {
+	list-style: none;
+	margin: 0 20px;
+}
+
+li {
+	padding: 5px 10px;
+	border-bottom: 1px solid #ddd;
+}
+
+li:first-of-type {
+	border-top: 1px solid #ddd;
+}
+
+li:nth-of-type(odd) {
+	background: #f8f8f8;
+}
+li:nth-of-type(even) {
+	background: #f1f1f1;
+}
+
+
+
+
+/* Textarea */
+textarea {
+	background: #fafafa;
+	font-family: Candara;
+	font-size: 12pt;
+	border: 1px solid #ddd;
+	padding: 7px;
+	outline: none;
+	overflow: hidden;
+	resize: none;
+
+    -webkit-border-radius: 3px;
+	-o-border-radius: 3px;
+    -moz-border-radius: 3px;
+
+    -webkit-transition: -webkit-box-shadow 0.2s ease;
+    -o-transition: box-shadow 0.2s ease;
+    -moz-transition: -moz-box-shadow 0.2s ease;
+}
+textarea:focus {
+	border: 1px solid #ccc;
+
+    -webkit-box-shadow: 0 0 3px #ccc;
+	-o-box-shadow: 0 0 3px #ccc;
+    -moz-box-shadow: 0 0 3px #ccc;
+}
+
+
+
+
+/* Text fields */
+input[type="text"],
+input[type="password"],
+input[type="file"],
+input[type="email"] {
+	background: #fafafa;
+	font-size: 12pt;
+	border: 1px solid #ddd;
+	padding: 7px;
+
+    -webkit-border-radius: 3px;
+	-o-border-radius: 3px;
+    -moz-border-radius: 3px;
+
+	-webkit-transition: -webkit-box-shadow 0.2s ease;
+    -o-transition: box-shadow 0.2s ease;
+    -moz-transition: -moz-box-shadow 0.2s ease;
+}
+input[type="text"]:focus,
+input[type="password"]:focus,
+input[type="file"]:focus,
+input[type="email"]:focus {
+	border: 1px solid #ccc;
+
+    -webkit-box-shadow: 0 0 3px #ccc;
+    -o-box-shadow: 0 0 3px #ccc;
+    -moz-box-shadow: 0 0 3px #ccc;
+}
+
+
+
+
+/* Buttons */
+input[type="button"],
+input[type="submit"],
+input[type="reset"],
+button {
+    background: url('/imgs/buttons.png') no-repeat;
+    font-size: 12pt;
+    font-weight: normal;
+	width: 150px;
+    height: 30px;
+    color: #555;
+}
+input[type="button"]:hover,
+input[type="submit"]:hover,
+input[type="reset"]:hover,
+button:hover {
+    background: url('/imgs/buttons.png') no-repeat 0 -30px;
+    cursor: pointer;
+}
+
+input[type="button"] img,
+input[type="submit"] img,
+input[type="reset"] img,
+button img {
+    vertical-align: middle;
+	margin-right: 5px;
+	position: relative;
+    top: -2px;
+}
+
+
+
+
+/* Checkboxes */
+input[type="radio"],
+input[type="checkbox"] {
+    background: #fafafa;
+    border: 1px solid #ddd;
+
+    -webkit-border-radius: 3px;
+    -o-border-radius: 3px;
+    -moz-border-radius: 3px;
+}
+input[type="radio"]:checked,
+input[type="checkbox"]:checked {
+    color:#aaa;
+    border:1px solid #ccc;
+
+    -webkit-box-shadow: 0 0 3px #ccc;
+    -o-box-shadow: 0 0 3px #ccc;
+    -moz-box-shadow: 0 0 3px #ccc;
+}

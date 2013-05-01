@@ -1,0 +1,8 @@
+{strip}
+<div class="rating">
+	<span onclick="Utils.ajax.classes.blog.vote({$article.id}, 'plus', this);" class="green pointer">
+        +</span>
+	<span class="number">{$article.rating}</span>
+	<span onclick="Utils.ajax.classes.blog.vote({$article.id}, 'minus', this);" class="red pointer">-</span>
+</div>
+{/strip}

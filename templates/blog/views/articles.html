@@ -1,0 +1,39 @@
+{strip}
+    {for $i = 0 to $blog.preview.limit - 1}
+        <article>
+            <h3><a href="{$blog.articles.$i.url}" title="{$blog.articles.$i.title}">{$blog.articles.$i.title}</a></h3>
+
+            <div class="information">
+                {$blog.articles.$i.rating.form}
+                {$blog.articles.$i.date} — {$blog.articles.$i.views} views
+            </div>
+
+            <div class="text">
+                {$blog.articles.$i.texts.short}
+
+                {if $blog.articles.$i.cut}
+                    <div class="cut">
+                        <a href="{$blog.articles.$i.url}" title="{$blog.articles.$i.title}">Continue...</a>
+                    </div>
+                {/if}
+
+                <div style="clear: both;"></div>
+            </div>
+        </article>
+    {/for}
+
+    {if $blog.preview.limit < $blog.articles.size}
+        <div style="margin-top: 50px;">
+            <h2>Older</h2>
+        </div>
+
+        {for $i = $blog.preview.limit to $blog.articles.size - 1}
+                <article style="margin: 0; padding: 0;">
+                    <div class="title">
+                        <div class="date">{$blog.articles.$i.date}</div>
+                        <a href="{$blog.articles.$i.url}" title="{$blog.articles.$i.title}">{$blog.articles.$i.title}</a>
+                    </div>
+                </article>
+        {/for}
+    {/if}
+{/strip}

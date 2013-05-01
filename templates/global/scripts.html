@@ -1,0 +1,62 @@
+{literal}
+        <script>
+            // SyntaxHighLighter settings
+            SyntaxHighlighter.config.tagName = "xmp";
+            SyntaxHighlighter.defaults['toolbar'] = false;
+            SyntaxHighlighter.all();
+
+
+
+            // DISQUS
+            var disqus_shortname = 'local.cheremushkin';
+            (function() {
+                var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+
+
+
+
+            (function() {
+                var a = document.getElementsByTagName('blockquote'),
+                        i = a.length,
+                        author;
+                if (a.length) {
+                    while (i--) {
+                        author = Utils.trim(a[i].getAttribute('author'));
+                        author = author ? '<br><span class="author">' + author + '</span>' : '';
+                        a[i].innerHTML = '“' + Utils.trim(a[i].innerHTML) + '“' + author
+                    }
+                }
+            })();
+            (function() {
+                var images = document.getElementsByTagName('img');
+
+                for (var i = 0; i < images.length; i++) {
+                    if (images[i].getAttribute('frame') == 'true') {
+                        var div = document.createElement('div'), // a frame
+                                src = images[i].src,
+                                alt = images[i].alt,
+                                link = images[i].getAttribute('link') == 'true' ? true : false,
+                                sign = images[i].getAttribute('sign') == 'true' ? true : false,
+                                width = images[i].width ? images[i].width : images[i].offsetWidth;
+
+                        div.className = 'image ' + images[i].className;
+
+                        // add and delete
+                        images[i].parentNode.insertBefore(div, images[i]);
+                        images[i].parentNode.removeChild(images[i]);
+
+                        div.innerHTML = '<div class="frame">' + (link ? '<a href="' + src + '" title="' + alt + '">' : '') + '<img src="'
+                                + src + '" alt="' + alt + '" width="' + width + '">' + (link ? '</a>' : '') + '</div>' + (sign ?
+                                '<div class="alt">' + alt + '</div>' : '');
+                    };
+                };
+            })();
+        </script>
+
+        <!-- Yandex.Metrika counter -->
+        <script type="text/javascript">var yaParams = {/*Здесь параметры визита*/};</script><script type="text/javascript">(function (d, w, c) { (w[c] = w[c] || []).push(function() { try { w.yaCounter15734713 = new Ya.Metrika({id:15734713, enableAll: true, trackHash:true, webvisor:true,params:window.yaParams||{ }}); } catch(e) {} }); var n = d.getElementsByTagName("script")[0], s = d.createElement("script"), f = function () { n.parentNode.insertBefore(s, n); }; s.type = "text/javascript"; s.async = true; s.src = (d.location.protocol == "https:" ? "https:" : "http:") + "//mc.yandex.ru/metrika/watch.js"; if (w.opera == "[object Opera]") { d.addEventListener("DOMContentLoaded", f); } else { f(); } })(document, window, "yandex_metrika_callbacks");</script><noscript><div><img src="//mc.yandex.ru/watch/15734713" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+        <!-- /Yandex.Metrika counter -->
+{/literal}

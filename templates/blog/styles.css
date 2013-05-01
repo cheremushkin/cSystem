@@ -1,0 +1,139 @@
+/* Articles */
+article {
+    margin-bottom: 50px;
+}
+article:last-of-type {
+    margin: 0;
+}
+
+article .text {
+    margin: 0;
+    text-align: justify;
+}
+
+article .information {
+    padding: 5px 10px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    font-size: 10pt;
+    font-style: italic;
+    color: #aaa;
+    letter-spacing: 2px;
+    border-bottom: 1px dashed #eee;
+}
+
+article .text .cut {
+    margin: 10px 0 0 20px;
+    font-size: 13pt;
+}
+
+
+article .title {
+    font-size: 12pt;
+    font-family: Antipasto;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    border-bottom: 1px solid #eee;
+    padding: 10px 5px;
+    background: #fcfcfc;
+    text-shadow: 1px 1px 1px #fff;
+}
+
+article .title .date {
+    float: right;
+    text-transform: uppercase;
+    font-size: 11pt;
+    font-style: italic;
+    color: #ccc;
+    letter-spacing: 2px;
+}
+
+article .title a {
+    color: #333;
+}
+article .title a:hover {
+    color: #68afb4
+}
+
+
+
+
+/* Stylized tables */
+article .text table {
+	width: 100%;
+	border: 1px solid #ddd;
+}
+
+article .text table tr:nth-of-type(odd) {
+	background: #fcfcfc;
+}
+article .text table tr:nth-of-type(even) {
+	background: #f5f5f5;
+}
+
+article .text table tr td {
+	padding: 5px 10px;
+	border-bottom: 1px solid #ccc;
+}
+article .text table tr:first-of-type td {
+	text-align: center;
+	background: #ffeeee;
+}
+
+
+
+
+/* Rating */
+article .rating {
+    display: inline-block;
+    float: right;
+}
+
+article .rating .number {
+    margin: 0 5px;
+}
+
+
+
+
+/* Переключатели страницы */
+.switchers {
+	margin-top: 40px;
+	text-align: center;
+}
+
+.switcher {
+	margin-right: 5px;
+}
+.switcher a:last-of-type {
+	margin: 0;
+}
+
+.switchers .active {
+	color: #000;
+	display: inline-block;
+	background: #ddd;
+	border-bottom: 3px solid #ff3600;
+	padding: 3px 13px;
+}
+
+.switchers .standart {
+	color: #000;
+	display: inline-block;
+	background: #ddd;
+	border-bottom: 3px solid #aaa;
+	padding: 3px 13px;
+
+	-webkit-transition: background 0.2s ease;
+	-o-transition: background 0.2s ease;
+	-moz-transition: background 0.2s ease;
+}
+.switchers .standart:hover {
+	background: #eee;
+	cursor: pointer; 
+}
+
+.switchers .standart a {
+	color: #000;
+}
+/* ------------------- */
