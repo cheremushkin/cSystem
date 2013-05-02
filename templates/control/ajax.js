@@ -14,7 +14,11 @@ Utils.ajax.classes.control = {
 			method: 'POST',
 			timeout: 3000,
 			success: function(response) {
-				response.code == 200 ? window.location.reload(true) : Utils.hints.open(response.message, 'fail');
+				if (response.code == 200) window.location.reload(true);
+                else {
+                    Utils.captcha.refresh();
+                    Utils.hints.open(response.message, 'fail');
+                }
 			},
 			error: function(type) {
 				switch (type) {

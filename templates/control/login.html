@@ -4,7 +4,7 @@
 		<title>{$global.title}</title>
 		
 		<script src="/templates/utils.js"></script>
-		<script src="/templates/control/ajax.js"></script>
+        <script src="/templates/control/ajax.js"></script>
 		
 		<link rel="stylesheet" href="/templates/control/styles.css">
 	</head>
@@ -15,7 +15,14 @@
 					<tr>
 						<th></th>
 						<td>
-							<img src="/captcha?count=6&width=200&height=30&min=18&max=24&start=15&background=252,252,252" alt="CAPTCHA" id="captcha" onclick="this.src = '/captcha?count=6&width=200&height=30&min=18&max=24';">
+                            <img id="captcha" alt="CAPTCHA" class="pointer" onclick="Utils.captcha.refresh();">
+                            <script>
+                                Utils.captcha.create("captcha", {
+                                    length: 6, width: 200, height: 30,
+                                    min: 18, max: 24, start: 15,
+                                    background: "252,252,252"
+                                });
+                            </script>
 						</td>
 					</tr>
 					<tr>

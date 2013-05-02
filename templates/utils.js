@@ -150,8 +150,7 @@ Utils = {
 					params.timeout && clearTimeout(params.timeout);
 					
 					// parse the response and transmission to handler
-                   alert(request.responseText);
-					var response = JSON.parse(request.responseText);
+                    var response = JSON.parse(request.responseText);
 					params.success && params.success(response);
 				} else {
 					params.timeout && clearTimeout(params.timeout);
@@ -165,33 +164,89 @@ Utils = {
 		// AJAX handlers
 		classes: {}
 	},
-	
-	
-	
-	/**
-	 * Beautiful animation hints.
-	 */
-	
-	hints: {
-		options: {
-			max: 5, // максимальное кол-во открытых подсказок
-			top: 10, // отступ для первой подсказки
-			between: 5, // промежуток между подсказками
-			
-			timers: {
-				fade: 250, // время на появление
-				position: 250, // время на позиционирование
-				life: 5000 // время существования
-			}
-		},
-		
-		queues:{all:[],open:[],close:[]},
-		is:{opening:false,closing:false,recursion:false},
-		open:function(message,name){var hint=document.createElement('div');this.customize(hint,message,name);this.queues.all.push(hint);if(this.queues.all.length>this.options.max||this.is.recursion){this.queues.open.push(hint);return false}else{this.view(hint)}},
-		customize:function(hint,message,name){hint.className='cHints '+name;hint.innerHTML=message;hint.style.opacity=0;hint.style.position='absolute';hint.style.right=10+'px'},
-		view:function(hint){hint.style.top=this.options.top+'px';document.body.appendChild(hint);this.options.top+=hint.offsetHeight+this.options.between;Utils.animation.make({object:hint,styles:[{name:'opacity',from:0,to:1}],properties:[{duration:this.options.timers.fade,callback:function(){setTimeout(function(){if(Utils.hints.is.recursion){Utils.hints.queues.close.push(hint);return false}else{Utils.hints.close(hint)}},Utils.hints.options.timers.life)}}]})},
-		close:function(hint){this.is.recursion=true;Utils.animation.make({object:hint,styles:[{name:'opacity',from:1,to:0}],properties:[{duration:Utils.hints.options.timers.fade,callback:function(){var height=hint.offsetHeight,top=parseInt(hint.style.top,10)+height+Utils.hints.options.between;document.body.removeChild(hint);var size=Utils.hints.queues.all.length-Utils.hints.queues.open.length;for(var i=1;i<size;i++){Utils.animation.make({object:Utils.hints.queues.all[i],styles:[{name:'top',from:top,to:top-height-Utils.hints.options.between,suffix:'px'}],properties:[{duration:Utils.hints.options.timers.position,}]});top+=parseInt(Utils.hints.queues.all[i].offsetHeight,10)+Utils.hints.options.between};setTimeout(function(){Utils.hints.options.top-=(height+5);Utils.hints.queues.all.shift();if(!Utils.hints.queues.close.length)Utils.hints.is.recursion=false;if(Utils.hints.queues.open.length){Utils.hints.view(Utils.hints.queues.open.shift())};if(Utils.hints.queues.close.length){setTimeout(function(){Utils.hints.close(Utils.hints.queues.close.shift())},Utils.hints.options.timers.fade)}},Utils.hints.options.timers.position)}}]})}
-	},
+
+
+
+    /**
+     * Beautiful animation hints.
+     */
+
+    hints: {
+        options: {
+            max: 5, // максимальное кол-во открытых подсказок
+            top: 10, // отступ для первой подсказки
+            between: 5, // промежуток между подсказками
+
+            timers: {
+                fade: 250, // время на появление
+                position: 250, // время на позиционирование
+                life: 5000 // время существования
+            }
+        },
+
+        queues:{all:[],open:[],close:[]},
+        is:{opening:false,closing:false,recursion:false},
+        open:function(message,name){var hint=document.createElement('div');this.customize(hint,message,name);this.queues.all.push(hint);if(this.queues.all.length>this.options.max||this.is.recursion){this.queues.open.push(hint);return false}else{this.view(hint)}},
+        customize:function(hint,message,name){hint.className='cHints '+name;hint.innerHTML=message;hint.style.opacity=0;hint.style.position='absolute';hint.style.right=10+'px'},
+        view:function(hint){hint.style.top=this.options.top+'px';document.body.appendChild(hint);this.options.top+=hint.offsetHeight+this.options.between;Utils.animation.make({object:hint,styles:[{name:'opacity',from:0,to:1}],properties:[{duration:this.options.timers.fade,callback:function(){setTimeout(function(){if(Utils.hints.is.recursion){Utils.hints.queues.close.push(hint);return false}else{Utils.hints.close(hint)}},Utils.hints.options.timers.life)}}]})},
+        close:function(hint){this.is.recursion=true;Utils.animation.make({object:hint,styles:[{name:'opacity',from:1,to:0}],properties:[{duration:Utils.hints.options.timers.fade,callback:function(){var height=hint.offsetHeight,top=parseInt(hint.style.top,10)+height+Utils.hints.options.between;document.body.removeChild(hint);var size=Utils.hints.queues.all.length-Utils.hints.queues.open.length;for(var i=1;i<size;i++){Utils.animation.make({object:Utils.hints.queues.all[i],styles:[{name:'top',from:top,to:top-height-Utils.hints.options.between,suffix:'px'}],properties:[{duration:Utils.hints.options.timers.position,}]});top+=parseInt(Utils.hints.queues.all[i].offsetHeight,10)+Utils.hints.options.between};setTimeout(function(){Utils.hints.options.top-=(height+5);Utils.hints.queues.all.shift();if(!Utils.hints.queues.close.length)Utils.hints.is.recursion=false;if(Utils.hints.queues.open.length){Utils.hints.view(Utils.hints.queues.open.shift())};if(Utils.hints.queues.close.length){setTimeout(function(){Utils.hints.close(Utils.hints.queues.close.shift())},Utils.hints.options.timers.fade)}},Utils.hints.options.timers.position)}}]})}
+    },
+
+
+
+    /**
+     * Object for control CAPTCHA image.
+     */
+
+    captcha: {
+        // CAPTCHA information
+        information: [],
+
+
+        // create a CAPTCHA
+        create: function(id, params) {
+            // find on the page and save
+            this.image = document.getElementById(id);
+
+
+            // create a URL and save params in the object
+            var url = [], key;
+            for (key in params) {
+                this.information[key] = params[key];
+                url[url.length] = key + "=" + params[key];
+            };
+            this.information["src"] = "/captcha?" + Utils.implode("&", url);
+
+
+            // make changes in the image's src path
+            this.image.src = this.information["src"];
+        },
+
+
+        // load new CAPTCHA
+        refresh: function() {
+            var callback = function() {
+                // refresh
+                Utils.captcha.image.src = Utils.captcha.information["src"];
+
+
+                // and return on the page
+                Utils.animation.make({
+                    object: Utils.captcha.image,
+                    styles: [{name: "opacity", from: 0, to: 1}],
+                    properties: [{duration: 200}]
+                });
+            };
+
+
+            // to opacity = 0
+            Utils.animation.make({
+                object: Utils.captcha.image,
+                styles: [{name: "opacity", from: 1, to: 0}],
+                properties: [{duration: 200, callback: callback}]
+            });
+        }
+    },
 	
 	
 	
@@ -309,32 +364,57 @@ Utils = {
 			};
 		};
 	},
-	
-	
-	
-	/**
-	 * Equivalent of PHP's function „trim“.
-	 */
-	
-	trim: (function() {
-	    var i,
-	    	ws = {},
-	        chars = ' \n\r\t\v\f\u00a0\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u200b\u2028\u2029\u3000',
-	        length = chars.length;
-			
-	    for (i = 0; i < length; i++) {
-			ws[chars.charAt(i)] = true;
-		};
-		
-	    return function(str) {
-	        var s = -1,
-				e = str.length;
-			
-	        while (ws[str.charAt(--e)]);
-	        while (s++ !== e && ws[str.charAt(s)]);
-	        return str.substring(s, e + 1);
-	    };
-	})(),
+
+
+
+    /**
+     * Equivalent of PHP's function „trim“.
+     */
+
+    trim: (function() {
+        var i,
+            ws = {},
+            chars = ' \n\r\t\v\f\u00a0\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u200b\u2028\u2029\u3000',
+            length = chars.length;
+
+        for (i = 0; i < length; i++) {
+            ws[chars.charAt(i)] = true;
+        };
+
+        return function(str) {
+            var s = -1,
+                e = str.length;
+
+            while (ws[str.charAt(--e)]);
+            while (s++ !== e && ws[str.charAt(s)]);
+            return str.substring(s, e + 1);
+        };
+    })(),
+
+
+
+    /**
+     * Equivalent of PHP's function implode().
+     */
+
+    implode: function(glue, pieces) {
+        var i = '', retVal = '', tGlue = '';
+        if (arguments.length === 1) {
+            pieces = glue;
+            glue = '';
+        };
+        if (typeof(pieces) === 'object') {
+            if (Object.prototype.toString.call(pieces) === '[object Array]') {
+                return pieces.join(glue);
+            }
+            for (i in pieces) {
+                retVal += tGlue + pieces[i];
+                tGlue = glue;
+            }
+            return retVal;
+        }
+        return pieces;
+    },
 	
 	
 	

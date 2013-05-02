@@ -20,7 +20,7 @@
 		
 		
 		function launch() {
-			$count = empty($_GET['count']) ? 4 : $_GET['count'];
+			$length = empty($_GET['length']) ? 4 : $_GET['length'];
 			$width = empty($_GET['width']) ? 125 : $_GET['width'];
 			$height = empty($_GET['height']) ? 40 : $_GET['height'];
 			$start = empty($_GET['start']) ? 10 : $_GET['start'];
@@ -61,7 +61,7 @@
 			
 			
 			// drawing
-			for ($i = 0; $i < $count; $i++) {
+			for ($i = 0; $i < $length; $i++) {
 				$char = $chars[array_rand($chars)];
 				
 				$size = rand($font['min'], $font['max']);
