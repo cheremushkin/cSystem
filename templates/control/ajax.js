@@ -7,7 +7,7 @@ Utils.ajax.classes.control = {
 				class: 'control',
 				method: 'login',
 				captcha: form.captcha && form.captcha.value ? form.captcha.value : null,
-				nickname: form.nickname && form.nickname.value ? form.nickname.value : null,
+				email: form.email && form.email.value ? form.email.value : null,
 				password: form.password && form.password.value ? form.password.value : null,
 				backdoor: form.backdoor && form.backdoor.value ? form.backdoor.value : null
 			},

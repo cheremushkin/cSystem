@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>{$title}</title>
+		<title>{$global.title}</title>
 		
 		<script src="/templates/utils.js"></script>
 		<script src="/templates/control/ajax.js"></script>
 		<script src="/templates/filemaj/ajax.js"></script>
-		<script src="http://d1n0x3qji82z53.cloudfront.net/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+		<script src="/templates/plugins/Ace/ace.js"></script>
 		
 		<link rel="stylesheet" href="/templates/control/styles.css">
 	</head>
@@ -16,12 +16,12 @@
 				{strip}
 				<div class="block">
 					<nav>
-						<a href="/control">Главная</a>
-						<a href="#general">Настройки</a>
+						<a href="/control">Home</a>
+						<a href="#general">Settings</a>
 						{foreach $control.classes as $class}
-							<a href="#{$class.name}">{$class.rus}</a>
+							<a href="/{$class.name}">{$class.name|capitalize}</a>
 						{/foreach}
-						<a href="/control/informers">Информеры</a>
+						<a href="/control/informers">Informers</a>
 					</nav>
 				</div>
 				{/strip}

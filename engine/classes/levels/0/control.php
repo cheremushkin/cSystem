@@ -68,7 +68,7 @@
                 // authorization title and finally implode titles
 				$this->title[] = $this->settings['classes'][$this->information['name']]['titles']['authorization']; $this->title();
 
-    			return $this->smarty->fetch("{$this->information['folder']}/login.html");
+                return $this->smarty->fetch("{$this->information['folder']}/login.html");
 			};
 			
 			
@@ -77,7 +77,7 @@
 			
 
 			// FileMAJ block will be used everywhere
-			$this->filemaj();
+			//$this->filemaj();
 			
 			
 			// in case of the main page we should prepare the title
@@ -123,6 +123,27 @@
 
 
         /**
+         * Finds information about the user from database.
+         *
+         * @param $id
+         * @return array
+         */
+
+        function user($id) {
+            $statement = $this->database->prepare("
+                SELECT id, nickname, email, counter
+                FROM {$this->information['table']}
+                WHERE id = :id
+            ");
+            $statement->bindValue(":id", $id); $statement->execute();
+
+            return $statement->fetch(PDO::FETCH_ASSOC);
+        }
+
+
+
+
+        /**
          * Information about client's permissions.
          *
          * @return bool
@@ -130,8 +151,8 @@
          */
 
         function permissions() {
-            return !empty($_SESSION['admin']['logged']) && $_SESSION['admin']['logged'] === true && $this->activity() ? true : false;
-		}
+            return !empty($_SESSION['control']['logged']) && $_SESSION['control']['logged'] === true && $this->activity() ? true : false;
+        }
 
 
 
@@ -144,14 +165,14 @@
 
         private function activity() {
 			// if inactivity time has ended, person will be logout
-			if (time() - $_SESSION['admin']['time'] > $this->settings['classes'][$this->information['name']]['security']['inactivity']) {
-				unset($_SESSION['admin']);
+			if (time() - $_SESSION['control']['time'] > $this->settings['classes'][$this->information['name']]['security']['inactivity']) {
+				unset($_SESSION['control']);
 				$this->sessionStop();
 				return false;
 			};
 			
 			// else last activity time in session will be changed to now 
-			$_SESSION['admin']['time'] = time();
+			$_SESSION['control']['time'] = time();
 			return true;
 		}
 
@@ -161,14 +182,14 @@
         /**
          * Crypts a password with Blowfish algorithm.
          *
-         * @param $nickname
+         * @param $id
          * @param $password
          *
          * @return string
          */
 
-        private function blowfish($nickname, $password) {
-			return crypt($password, '$2a$10$7fmnb3' . substr($nickname, 0, 6) . 'JZaAqOI6r$');
+        private function blowfish($id, $password) {
+			return crypt($password, '$2a$10$7fmnbAs5Bap3' . substr($id, 0, 2) . 'JZaAqOI6r$');
 		}
 
 
@@ -177,7 +198,7 @@
         /**
          * Checks nickname and password.
          *
-         * @param $nickname
+         * @param $email
          * @param $password
          *
          * @return mixed
@@ -188,20 +209,20 @@
          * 22 — You have an error in the password.
          */
 
-        private function authentication($nickname, $password) {
+        private function authentication($email, $password) {
             // get ID using a PDOStatement
             $statement = $this->database->prepare("
 			    SELECT id
 			    FROM {$this->information['table']}
-			    WHERE nickname = :nickname
+			    WHERE email = :email
 			");
-            $statement->bindValue(":nickname", $nickname); $statement->execute();
+            $statement->bindValue(":email", $email); $statement->execute();
             $id = $statement->fetchColumn();
             if (!$id) throw new Exception("This user does not exist.", 21);
 
 
             // check password using a PDOStatement
-            $password = $this->blowfish($nickname, $password);
+            $password = $this->blowfish($id, $password);
             $statement = $this->database->prepare("
                 SELECT COUNT(*)
                 FROM {$this->information['table']}
@@ -225,7 +246,7 @@
 
         private function classes() {
             // prepare PDOStatement, bind, execute and return a result
-            $statement = $this->database->prepare("SELECT * FROM system_classes WHERE name != :name");
+            $statement = $this->database->prepare("SELECT * FROM system_classes WHERE name != :name && level != 0");
             $statement->bindValue(":name", $this->information['name']); $statement->execute();
             return $statement->fetchAll(PDO::FETCH_ASSOC);
         }
@@ -257,7 +278,7 @@
 					return $this->smarty->fetch('admin/informers/create.html');
 				
 				default:
-					// check informerv
+					// check informers
 					if (empty($this->registry->get('informers')[$this->url[2]])) throw new Exception(false, 404);
 					
 					
@@ -335,6 +356,7 @@
          * 701 — You have already logged in control panel.
          * 702 — The wrong security code has been given.
          * 703 — Not all fields are filled.
+         * 704 — You have an error in your email syntax.
          */
 
         function login($data) {
@@ -350,31 +372,36 @@
 			};
 			
 			
-			// check nickname and password
-			$nickname = empty($data->nickname) ? NULL : $data->nickname;
+			// check email and password
+			$email = empty($data->email) ? NULL : $data->email;
 			$password = empty($data->password) ? NULL : $data->password;
-			if (!$nickname || !$password) {
+			if (!$email || !$password) {
 				$this->sessionStop();
 				throw new Exception("Not all fields are filled.", 703);
 			};
+
+            if (!preg_match("/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,3})$/", $email)) {
+                $this->sessionStop();
+                throw new Exception("You have an error in your email syntax.", 704);
+            };
 			
 			
 			// in case of error will generate an exception
-			$id = $this->authentication($nickname, $password);
+			$user = $this->user($this->authentication($email, $password));
 			
 			
 			// in case of success, authenticationsuccess will return user's ID
 			// else it will throw an exception
-			$_SESSION['admin'] = array(
-				'id' => $id,
+			$_SESSION['control'] = array(
+				'id' => $user['id'],
+                'nickname' => $user['nickname'],
 				'logged' => true,
-				'nickname' => $nickname,
 				'ip' => $_SERVER['REMOTE_ADDR'],
 				'time' => time()
 			);
 			
 			return array(
-				'message' => "User successfully logged in. Nickname: $nickname.",
+				'message' => "User successfully logged in. Nickname: {$user['nickname']}.",
 				'code' => 200,
                 'log' => true
 			);
