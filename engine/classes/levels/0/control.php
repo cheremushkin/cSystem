@@ -364,8 +364,8 @@
 			
 			
 			// check captcha
-			$captcha = empty($data->captcha) || empty($_SESSION['captcha']) || $_SESSION['captcha'] != $data->captcha ? false : true;
-			unset($_SESSION['captcha']);
+			$captcha = empty($data->captcha) || empty($_SESSION['captcha'][$data->captcha->id]) || $_SESSION['captcha'][$data->captcha->id] != $data->captcha->value ? false : true;
+			unset($_SESSION['captcha'][$data->captcha->id]);
 			if (!$captcha) {
 				$this->sessionStop();
 				throw new Exception("The wrong security code has been given.", 702);

@@ -83,7 +83,7 @@
 
 
                 // add new title element
-                $this->title[] = "404 Not Found";
+                $this->title[] = $code == 404 ? "404 Not Found" : "Error $code";
 
 
                 // if file with error code exists, fetch him

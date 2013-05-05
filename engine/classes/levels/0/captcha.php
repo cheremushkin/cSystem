@@ -20,7 +20,10 @@
 		
 		
 		function launch() {
-			$length = empty($_GET['length']) ? 4 : $_GET['length'];
+            $id = empty($_GET['id']) ? NULL : $_GET['id'];
+            if (!$id) throw new Exception("Security code’s ID has given incorrectly.", 370);
+
+            $length = empty($_GET['length']) ? 4 : $_GET['length'];
 			$width = empty($_GET['width']) ? 125 : $_GET['width'];
 			$height = empty($_GET['height']) ? 40 : $_GET['height'];
 			$start = empty($_GET['start']) ? 10 : $_GET['start'];
@@ -77,7 +80,10 @@
 			
 			// save in Session
 			$this->sessionStart();
-			$_SESSION['captcha'] = $string;
+			$_SESSION['captcha'] = array_merge(
+                is_array($_SESSION['captcha']) ? $_SESSION['captcha'] : array(),
+                array($id => $string)
+            );
 			
 			header('Content-type: image/png');
 			imagepng($image);

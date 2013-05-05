@@ -60,7 +60,9 @@ Utils = {
                             params.object.style[style.name] = style.prefix + style.to + style.suffix;
                         
                             // callback
-                            properties.callback && properties.callback();
+                            if (properties.callback) {
+                                properties.callback.function.apply(properties.callback.context ? properties.callback.context : window, properties.callback.arguments ? properties.callback.arguments : []);
+                            };
                         };
                     }, 0)
                 };
@@ -84,8 +86,8 @@ Utils = {
 				success: function
 				error: function
 			} */
-			
-			
+
+
 			// cross browser request
 			var factories = [
 					function() {
@@ -195,56 +197,102 @@ Utils = {
 
 
     /**
-     * Object for control CAPTCHA image.
+     * Object for controlling CAPTCHA images.
      */
 
     captcha: {
-        // CAPTCHA information
-        information: [],
+        // all security codes
+        all: [],
 
 
-        // create a CAPTCHA
-        create: function(id, params) {
-            // find on the page and save
-            this.image = document.getElementById(id);
-
-
-            // create a URL and save params in the object
-            var url = [], key;
-            for (key in params) {
-                this.information[key] = params[key];
-                url[url.length] = key + "=" + params[key];
-            };
-            this.information["src"] = "/captcha?" + Utils.implode("&", url);
-
-
-            // make changes in the image's src path
-            this.image.src = this.information["src"];
+        // finds a security code using its ID
+        get: function(id) {
+            return this.all[id] || false;
         },
 
 
-        // load new CAPTCHA
-        refresh: function() {
-            var callback = function() {
-                // refresh
-                Utils.captcha.image.src = Utils.captcha.information["src"];
+        // create new instance
+        init: function(id, image, field, parameters) {
+            // check if ID is busy
+            if (this.all[id]) return false;
 
 
-                // and return on the page
-                Utils.animation.make({
-                    object: Utils.captcha.image,
-                    styles: [{name: "opacity", from: 0, to: 1}],
-                    properties: [{duration: 200}]
-                });
+            (captcha = function(image, field, parameters) {
+                // find on the page and save
+                this.image = document.getElementById(image);
+                this.field = document.getElementById(field);
+
+
+                // action's flag
+                this.action = true;
+
+
+                // create a URL and save in the object
+                var url = [], key; this.parameters = {};
+                for (key in parameters) {
+                    url[url.length] = key + "=" + parameters[key];
+                    this.parameters[key] = parameters[key];
+                };
+                this.src = "/captcha?" + Utils.implode("&", url);
+
+
+                // set onclick handler
+                this.image.onclick = (function(captcha) {
+                    return function() {
+                        captcha.refresh();
+                    };
+                })(this);
+            }).prototype = {
+                // create an image
+                create: function() {
+                    this.image.src = this.src;
+                },
+
+
+                // load new CAPTCHA
+                refresh: function() {
+                    // check if another action is going now
+                    if (!captcha.action) return false;
+                    captcha.action = false;
+
+
+                    // reset CAPTCHA field
+                    this.field.value = "";
+
+
+                    var callback = function() {
+                        // refresh
+                        this.image.src = this.src;
+
+
+                        var callback = function() {
+                            this.action = true;
+                        };
+
+
+                        // and return on the page
+                        Utils.animation.make({
+                            object: this.image,
+                            styles: [{name: "opacity", from: 0, to: 1}],
+                            properties: [{duration: 250, callback: {function: callback, context: this}}]
+                        });
+                    };
+
+
+                    // to opacity = 0
+                    Utils.animation.make({
+                        object: this.image,
+                        styles: [{name: "opacity", from: 1, to: 0}],
+                        properties: [{duration: 250, callback: {function: callback, context: this}}]
+                    });
+                }
             };
 
 
-            // to opacity = 0
-            Utils.animation.make({
-                object: Utils.captcha.image,
-                styles: [{name: "opacity", from: 1, to: 0}],
-                properties: [{duration: 200, callback: callback}]
-            });
+            // create an instance, save in the object and return
+            captcha = new captcha(image, field, parameters);
+            this.all[id] = captcha;
+            return captcha;
         }
     },
 	

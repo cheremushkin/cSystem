@@ -10,25 +10,18 @@
 	</head>
 	<body>
 		<div id="login">
-			<form onsubmit="Utils.ajax.classes.control.login(this); return false;" class="right">
+			<form id="form" class="right">
 				<table class="markup">
 					<tr>
 						<th></th>
 						<td>
-                            <img id="captcha" alt="CAPTCHA" class="pointer" onclick="Utils.captcha.refresh();">
-                            <script>
-                                Utils.captcha.create("captcha", {
-                                    length: 6, width: 200, height: 30,
-                                    min: 18, max: 24, start: 15,
-                                    background: "252,252,252"
-                                });
-                            </script>
+                            <img id="captcha-image" alt="CAPTCHA" class="pointer">
 						</td>
 					</tr>
 					<tr>
 						<th>captcha:</th>
 						<td>
-							<input type="text" name="captcha" maxlength="6" autocomplete="off">
+							<input type="text" id="captcha-field" name="captcha" maxlength="6" autocomplete="off">
 						</td>
 					</tr>
 					<tr>
@@ -61,12 +54,28 @@
 			
 			<div style="clear: both;"></div>
 		</div>
-		
+
+        {literal}
 		<script>
+            // set CAPTCHA
+            var captcha = Utils.captcha.init("captcha", "captcha-image", "captcha-field", {id: "captcha", length: 6, width: 200, height: 30, min: 18, max: 24, start: 15, background: "252,252,252"});
+            captcha.create();
+
+
+            // set submit handler on the form
+            document.getElementById("form").onsubmit = (function() {
+                return function() {
+                    captcha.action && Utils.ajax.classes.control.login("form", "captcha");
+                    return false;
+                };
+            })();
+
+
 			var div = document.getElementById('login');
 			div.style.position = 'relative';
 			div.style.top = (window.innerHeight / 2 - div.offsetHeight / 2 - 100) + 'px';
 			div.style.left = (window.innerWidth / 2 - div.offsetWidth / 2) + 'px';
 		</script>
+        {/literal}
 	</body>
 </html>

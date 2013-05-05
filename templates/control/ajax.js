@@ -1,12 +1,18 @@
 Utils.ajax.classes.control = {
 	// authorization in control panel
-	login: function(form) {
-		Utils.ajax.query({
+	login: function(form, captcha) {
+        form = document.getElementById(form);
+        captcha = Utils.captcha.get(captcha);
+
+        Utils.ajax.query({
 			url: '/ajax.php',
 			data: {
 				class: 'control',
 				method: 'login',
-				captcha: form.captcha && form.captcha.value ? form.captcha.value : null,
+				captcha: {
+                    id: captcha.parameters.id,
+                    value: form.captcha && form.captcha.value ? form.captcha.value : null
+                },
 				email: form.email && form.email.value ? form.email.value : null,
 				password: form.password && form.password.value ? form.password.value : null,
 				backdoor: form.backdoor && form.backdoor.value ? form.backdoor.value : null
@@ -16,8 +22,8 @@ Utils.ajax.classes.control = {
 			success: function(response) {
 				if (response.code == 200) window.location.reload(true);
                 else {
-                    Utils.captcha.refresh();
-                    Utils.hints.open(response.message, 'fail');
+                    captcha.refresh();
+                    //Utils.hints.open(response.message, 'fail');
                 }
 			},
 			error: function(type) {
