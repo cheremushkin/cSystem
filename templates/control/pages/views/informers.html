@@ -1,0 +1,14 @@
+{--strip--}
+<table>
+	<tr>
+		<td>Название</td>
+		<td>Описание</td>
+	</tr>
+	{--foreach $informers as $informer--}
+		<tr>
+			<td>{--$informer.rus--}</td>
+			<td>{--$informer.description--}</td>
+		</tr>
+	{--/foreach--}
+</table>
+{--/strip--}

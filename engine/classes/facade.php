@@ -457,7 +457,7 @@
 			};
 			
 			// write a log and delete an index
-			if ($answer['log']) {
+			if (!empty($answer['log']) && $answer['log'] === true) {
                 $statement = $this->database->prepare("
 			        INSERT INTO system_logs (place, code, message)
 			        VALUES (:place, :code, :message)

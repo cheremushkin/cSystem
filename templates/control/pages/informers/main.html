@@ -1,0 +1,20 @@
+<h2>Информеры</h2>
+{strip}
+	<table style="width: 50%; float: left; margin: 0 20px 20px 0;" class="stylized">
+		<tr>
+			<td>Название</td>
+			<td>Описание</td>
+		</tr>
+		{foreach $informers as $informer}
+			<tr>
+				<td><a href="/admin/informers/{$informer.name.low}" alt="{$informer.name.rus}">{$informer.name.rus}</a></td>
+				<td>{$informer.description}</td>
+			</tr>
+		{/foreach}
+	</table>
+{/strip}
+
+<p>Информер — это удобный способ выводить информацию пользователю.
+Например, вы хотите сделать блок с последними комментариями в модуле „Блог“.
+Для этого нужно лишь создать такой информер <i>(для этого есть удобный редактор)</i> и он автоматически будет подключаться на все страницы сайта.
+Слева можно выбрать один из существующих информеров.</p>				

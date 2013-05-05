@@ -19,10 +19,8 @@
 
         function title() {
             $this->smarty->append(
-                'global',
-                array(
-                    'title' => implode(" — ", array_reverse($this->title))
-                ),
+                'template',
+                array('title' => implode(" — ", array_reverse($this->title))),
                 true
             );
         }

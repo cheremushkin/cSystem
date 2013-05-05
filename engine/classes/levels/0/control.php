@@ -66,58 +66,67 @@
 			// firstly, check client's authorization
 			if (!$this->permissions()) {
                 // authorization title and finally implode titles
-				$this->title[] = $this->settings['classes'][$this->information['name']]['titles']['authorization']; $this->title();
+				$this->title[] = $this->settings['classes'][$this->information['name']]['titles']['authorization'];
+                $this->title();
 
                 return $this->smarty->fetch("{$this->information['folder']}/login.html");
 			};
-			
-			
-			// list of classes that will be used everywhere
-			$this->smarty->append($this->information['name'], ['classes' => $this->classes()], true);
-			
 
-			// FileMAJ block will be used everywhere
-			//$this->filemaj();
-			
-			
-			// in case of the main page we should prepare the title
-			if (empty($this->url[1])) {
-				$this->title();
-				return $this->smarty->fetch("{$this->information['folder']}/main.html");
-			};
-			
-			
-			// in other cases
-			switch($this->url[1]) {
-				case "informers":
-					// append title and parse informers page
-					$this->title[] = $this->settings['features']['informers']['titles']['home'];
-					$this->smarty->append($this->information['name'], ['content' => $this->informers()], true);
-					break;
-				
-				default: break;
-			};
-			
-			
+
+            // save blocks in Smarty
+            $this->smarty->assign("template", array('content' => $this->content()));
+
+
 			// prepare title
 			$this->title();
 			
-			
-			return $this->smarty->fetch("{$this->information['folder']}/pages.html");
+			return $this->smarty->fetch("{$this->information['folder']}/page.html");
 		}
 
 
 
 
         /**
-		 * Loads FileMAJ and makes a Smarty code of it.
-		 */
-		
-		private function filemaj() {
-			$filemaj = $this->builder->build('Filemaj');
-			$filemaj->init(['path' => empty($_SESSION['filemaj']['folder']) ? "/" : $_SESSION['filemaj']['folder']]);
-			$this->smarty->append($this->information['name'], ['filemaj' => $filemaj->launch()], true);
-		}
+         * Parses the page and generates the content.
+         */
+
+        private function content() {
+            // create list of classes in Smarty
+            $this->smarty->append($this->information['name'], ['classes' => $this->classes()], true);
+
+
+            // FileMAJ block will be used everywhere
+            //$this->filemaj();
+
+
+            // in case of the home page we should prepare the title
+            if (empty($this->url[1])) return $this->smarty->fetch("{$this->information['folder']}/content/home.html");
+
+
+            // in other cases
+            switch($this->url[1]) {
+                case "informers":
+                    // append title and parse informers page
+                    $this->title[] = $this->settings['features']['informers']['titles']['home'];
+                    return $this->informers();
+                    break;
+
+                default: break;
+            };
+        }
+
+
+
+
+        /**
+         * Loads FileMAJ and makes a Smarty code of it.
+         */
+
+        private function filemaj() {
+            $filemaj = $this->builder->build('Filemaj');
+            $filemaj->init(['path' => empty($_SESSION['filemaj']['folder']) ? "/" : $_SESSION['filemaj']['folder']]);
+            $this->smarty->append($this->information['name'], ['filemaj' => $filemaj->launch()], true);
+        }
 
 
 
@@ -245,10 +254,13 @@
          */
 
         private function classes() {
-            // prepare PDOStatement, bind, execute and return a result
+            // prepare PDOStatement, bind, execute
             $statement = $this->database->prepare("SELECT * FROM system_classes WHERE name != :name && level != 0");
             $statement->bindValue(":name", $this->information['name']); $statement->execute();
-            return $statement->fetchAll(PDO::FETCH_ASSOC);
+
+            while ($class = $statement->fetchAll(PDO::FETCH_ASSOC)) {
+
+            };
         }
 
 
@@ -406,24 +418,34 @@
                 'log' => true
 			);
 		}
-		
-		
-		
-		// log out from admin panel
-		function logout($data) {
-			if (!$this->permissions()) throw new Exception("You have not logged in.", 0);
+
+
+
+		/**
+         * Logs out the user from the system.
+         *
+         * @param $data
+         *
+         * @return array
+         * Data array for JSON-encoding.
+         *
+         * @throws Exception
+         * 705 — You have not logged in.
+         */
+
+        function logout($data) {
+			if (!$this->permissions()) throw new Exception("You have not logged in.", 705);
 			
 			
-			// success, so delete information about user
-			$nickname = $_SESSION['admin']['nickname'];
-			unset($_SESSION['admin']);
+			// delete information about the user
+			$nickname = $_SESSION['control']['nickname'];
+			unset($_SESSION['control']);
 			
 			
 			return array(
-				'message' => "User $nickname successfuly logged out.",
+				'message' => "User successfully logged out. Nickname: $nickname.",
 				'code' => 200
 			);
 		}
-		// --------------------------------------------------------------
 	};
 ?>

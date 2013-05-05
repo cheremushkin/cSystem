@@ -1,5 +1,5 @@
 Utils.ajax.classes.control = {
-	// authorization in control panel
+	// authorization in the control panel
 	login: function(form, captcha) {
         form = document.getElementById(form);
         captcha = Utils.captcha.get(captcha);
@@ -39,8 +39,9 @@ Utils.ajax.classes.control = {
 			}
 		});
 	},
-	
-	// log out from control panel
+
+
+	// log out from the control panel
 	logout: function() {
 		Utils.ajax.query({
 			url: '/ajax.php',
@@ -51,7 +52,7 @@ Utils.ajax.classes.control = {
 			method: 'POST',
 			timeout: 3000,
 			success: function(response) {
-				response.code == 200 ? window.location.reload(true) : Utils.hints.open(response.message, 'fail');
+                response.code == 200 ? location.href = "/control" : alert(response.message);
 			},
 			error: function(type) {
 				switch (type) {
@@ -66,7 +67,8 @@ Utils.ajax.classes.control = {
 			}
 		});
 	},
-	
+
+
 	// delete a file/directory (realy it moves into basket)
 	delete: function(path, number) {
 		wrapper = document.getElementById('files-line-' + number);
