@@ -140,7 +140,7 @@
 
         function user($id) {
             $statement = $this->database->prepare("
-                SELECT id, nickname, email, counter
+                SELECT id, nickname, email, counter, timer
                 FROM {$this->information['table']}
                 WHERE id = :id
             ");
@@ -200,48 +200,6 @@
         private function blowfish($id, $password) {
 			return crypt($password, '$2a$10$7fmnbAs5Bap3' . substr($id, 0, 2) . 'JZaAqOI6r$');
 		}
-
-
-
-
-        /**
-         * Checks nickname and password.
-         *
-         * @param $email
-         * @param $password
-         *
-         * @return mixed
-         * Returns user ID.
-         *
-         * @throws Exception
-         * 21 — This user does not exist.
-         * 22 — You have an error in the password.
-         */
-
-        private function authentication($email, $password) {
-            // get ID using a PDOStatement
-            $statement = $this->database->prepare("
-			    SELECT id
-			    FROM {$this->information['table']}
-			    WHERE email = :email
-			");
-            $statement->bindValue(":email", $email); $statement->execute();
-            $id = $statement->fetchColumn();
-            if (!$id) throw new Exception("This user does not exist.", 21);
-
-
-            // check password using a PDOStatement
-            $password = $this->blowfish($id, $password);
-            $statement = $this->database->prepare("
-                SELECT COUNT(*)
-                FROM {$this->information['table']}
-                WHERE id = :id && password = :password
-            ");
-            $statement->bindValue(":id", $id); $statement->bindValue(":password", $password); $statement->execute();
-            if (!$statement->fetchColumn()) throw new Exception("You have an error in the password.", 22);
-
-            return $id;
-        }
 
 
 
@@ -369,6 +327,11 @@
          * 702 — The wrong security code has been given.
          * 703 — Not all fields are filled.
          * 704 — You have an error in your email syntax.
+         * 705 — This user does not exist.
+         * 706 — Entrance into this account is blocked now.
+         *
+         * @other
+         * 707 — You have an error in the password.
          */
 
         function login($data) {
@@ -398,12 +361,64 @@
             };
 			
 			
-			// in case of error will generate an exception
-			$user = $this->user($this->authentication($email, $password));
+			// authentication
+            $statement = $this->database->prepare("
+			    SELECT id, counter, timer
+			    FROM {$this->information['table']}
+			    WHERE email = :email
+			");
+            $statement->bindValue(":email", $email); $statement->execute();
+            $user = $statement->fetch(PDO::FETCH_ASSOC);
+            if (!$user['id']) throw new Exception("This user does not exist.", 705);
+
+
+            // check if entrance is not available
+            if (!$user['counter'] && strtotime($user['timer']) > time()) throw new Exception("Entrance into this account is blocked now.", 706);
+
+
+            // check password using a PDOStatement and if the password do not match, decrement the counter of tries
+            $password = $this->blowfish($user['id'], $password);
+            $statement = $this->database->prepare("
+                SELECT COUNT(*)
+                FROM {$this->information['table']}
+                WHERE id = :id && password = :password
+            ");
+            $statement->bindValue(":id", $user['id']); $statement->bindValue(":password", $password); $statement->execute();
+            if (!$statement->fetchColumn()) {
+                // change the counter and the timer in case of the timer is end
+                // or change only the timer in case if it is the first mistake
+                if (strtotime($user['timer']) < time() || $user['counter'] == $this->settings['classes'][$this->information['name']]['security']['counter']) {
+                    if (strtotime($user['timer']) < time()) $user['counter'] = $this->settings['classes'][$this->information['name']]['security']['counter'];
+                    $user['timer'] = date('Y-m-d H:i:s', time() + $this->settings['classes'][$this->information['name']]['security']['timer']);
+                };
+
+
+                // make changes
+                $statement = $this->database->prepare("
+                    UPDATE {$this->information['table']}
+                    SET counter = :counter, timer = :timer
+                    WHERE id = {$user['id']}
+                ");
+                $statement->execute(
+                    array(
+                        ':counter' => --$user['counter'],
+                        ':timer' => $user['timer']
+                    )
+                );
+
+                return array(
+                    'message' => "You have an error in the password.",
+                    'code' => 707,
+                    'counter' => $user['counter']
+                );
+            };
+
+
+            // get information about the user
+			$user = $this->user($user['id']);
 			
 			
-			// in case of success, authenticationsuccess will return user's ID
-			// else it will throw an exception
+			// set information about this client in the session
 			$_SESSION['control'] = array(
 				'id' => $user['id'],
                 'nickname' => $user['nickname'],
@@ -411,7 +426,21 @@
 				'ip' => $_SERVER['REMOTE_ADDR'],
 				'time' => time()
 			);
-			
+
+
+            // restore the counter and the timer
+            $statement = $this->database->prepare("
+                UPDATE {$this->information['table']}
+                SET counter = :counter, timer = :timer
+                WHERE id = {$user['id']}
+            ");
+            $statement->execute(
+                array(
+                    ':counter' => $this->settings['classes'][$this->information['name']]['security']['counter'],
+                    ':timer' => date('Y-m-d H:i:s', time() + $this->settings['classes'][$this->information['name']]['security']['timer'])
+                )
+            );
+
 			return array(
 				'message' => "User successfully logged in. Nickname: {$user['nickname']}.",
 				'code' => 200,
