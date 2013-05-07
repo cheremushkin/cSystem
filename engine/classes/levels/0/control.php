@@ -13,11 +13,11 @@
 	class Control extends Level {
 		use Session, Title;
 		
-		private $registry; // instance of “Registry“
-		private $builder; // instance of “Builder“
-		private $smarty; // instance of “Smarty“
-		private $database; // instance of database handler
-        private $information; // information about class from Builder
+		private $registry; // instance of Registry
+		private $builder; // instance of Builder
+		private $smarty; // instance of Smarty
+		private $database; // instance of the database handler
+        private $information; // information about the class from Builder
 		private $settings; // all settings
 		private $url; // parsed URL
 		
@@ -39,7 +39,7 @@
 
 
 
-        /*
+        /**
          * General
          */
 
@@ -91,12 +91,15 @@
          */
 
         private function content() {
-            // create list of classes in Smarty
-            $this->smarty->append($this->information['name'], ['classes' => $this->classes()], true);
-
-
-            // FileMAJ block will be used everywhere
-            //$this->filemaj();
+            // create list of classes and FileMAJ block in Smarty
+            $this->smarty->append(
+                $this->information['name'],
+                array(
+                    'classes' => $this->classes(),
+                    'filemaj' => $this->filemaj()
+                ),
+                true
+            );
 
 
             // in case of the home page we should prepare the title
@@ -124,8 +127,9 @@
 
         private function filemaj() {
             $filemaj = $this->builder->build('Filemaj');
-            $filemaj->init(['path' => empty($_SESSION['filemaj']['folder']) ? "/" : $_SESSION['filemaj']['folder']]);
-            $this->smarty->append($this->information['name'], ['filemaj' => $filemaj->launch()], true);
+            $filemaj->path(empty($_SESSION['control']['filemaj']['folder']) ? "/" : $_SESSION['control']['filemaj']['folder']);
+
+            return $filemaj->launch();
         }
 
 
@@ -268,7 +272,7 @@
 
 
 
-		/*
+		/**
 		 * AJAX
 		 */
 

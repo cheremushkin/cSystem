@@ -2,9 +2,11 @@
 	class Errors extends Level {
         use Title;
 
-        private $registry; // instance of “Registry“
-        private $smarty; // instance of “Smarty“
+        private $registry; // instance of Registry
+        private $smarty; // instance of Smarty
+        private $database; // instance of the database handler
         private $information; // information about class from Builder
+        private $settings; // settings for Errors
 
 
 
@@ -14,7 +16,9 @@
             // initialize a properties
             $this->registry = Registry::instance();
             $this->smarty = $this->registry->get('smarty');
+            $this->database = $this->registry->get('database');
             $this->information = Builder::instance()->information(__CLASS__);
+            $this->settings = $this->registry->get('settings')['classes'][$this->information['name']];
         }
 
 
@@ -39,7 +43,7 @@
         function launch() {
             // save global blocks in Smarty
             $this->smarty->assign(
-                'global',
+                'template',
                 array(
                     'header' => $this->smarty->fetch('global/header.html'),
                     'error' => $this->find(func_get_arg(0), func_get_arg(1)),
@@ -71,9 +75,8 @@
          * A compiled template with the error.
          */
 
-        function find($code, $message) {
-            // set default values
-            if (!$code) $code = 404;
+        function find($message = false, $code = false) {
+            if (!$code && !$message) $code = 404;
 
 
             if (method_exists($this, $code)) return $this->$code();
@@ -83,7 +86,10 @@
 
 
                 // add new title element
-                $this->title[] = $code == 404 ? "404 Not Found" : "Error $code";
+                if ($code && !empty($this->settings['titles'][$code])) $title = $this->settings['titles'][$code];
+                else if ($code) $title = "Error $code";
+                else $title = "Undefined Error";
+                $this->title[] = $title;
 
 
                 // if file with error code exists, fetch him

@@ -1,11 +1,11 @@
 {strip}
 <table id="filemaj-table">
 	<tr id="filemaj-line-header">
-		<td class="first">Элемент</td>
-		<td class="second">Операции</td>
+		<td class="first">Element</td>
+		<td class="second">Operations</td>
 	</tr>
 	
-	{foreach $filemaj.content as $element}
+	{foreach $filemaj.folder as $element}
 		<tr id="filemaj-line-{$element.number}">
 			<td id="filemaj-line-{$element.number}-field-1" class="first">
 				<img src="{$element.logo}" alt="{$element.type|capitalize}">

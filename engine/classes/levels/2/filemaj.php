@@ -2,95 +2,143 @@
 	class Filemaj extends Level {
 		use Session;
 
-        private $smarty; // global Smarty instance from Registry
-        private $information; // information about class from Builder
-		private $types = array(
-            'script' => array(
-                'extension' => array('php', 'js'),
-                'link' => false
-            ),
-            'template' => array(
-                'extension' => array('html', 'xhtml', 'css'),
-                'link' => false
-            ),
-            'archive' => array(
-                'extension' => array('zip', 'rar'),
-                'link' => true
-            ),
-            'text' => array(
-                'extension' => array('txt', 'doc'),
-                'link' => false
-            ),
-            'pdf' => array(
-                'extension' => array('pdf'),
-                'link' => true
-            ),
-            'jpg' => array(
-                'extension' => array('jpg', 'jpeg'),
-                'link' => true
-            ),
-            'gif' => array(
-                'extension' => array('gif'),
-                'link' => true
-            ),
-            'png' => array(
-                'extension' => array('png'),
-                'link' => true
-            )
-        ); // list of file types
-		
-		private $path; // initialized path to folder, that will be parse
-		
-		const operations = "filemaj/operations"; // path to the folder with operations relative to /templates folder
-		const basket = "filemaj/basket"; // basket's folder relative to /templates folder
-		
-		
-		
-		
-		// методы интерфейса --------------------------------------------
-		function __construct() {
-			// initialization properties
-			$this->smarty = Registry::instance()->get('smarty');
+        private $smarty; // instance of Smarty
+        private $information; // information about the class from Builder
+        private $settings; // settings for FileMAJ
+
+
+        private $path; // initialized path to the folder, that will be parsed
+		private $types = array();
+
+
+
+
+
+        function __construct() {
+            // initialize a properties
+            $this->registry = Registry::instance();
+            $this->smarty = $this->registry->get('smarty');
             $this->information = Builder::instance()->information(__CLASS__);
+            $this->settings = $this->registry->get('settings');
 
 
-            // check permission from Control class
-            $permissions = Proxy::instance()->request('Control', 'permissions');
-            if (!$permissions) return "You have no permissions to work with FileMAJ.";
+            // set the list of types
+            $this->types();
+
+
+            // check permission in the Control Panel
+            if (!Proxy::instance()->request('Control', 'permissions')) return "You have no permissions to work with FileMAJ.";
+        }
+
+
+
+
+
+        /**
+         * General
+         */
+
+
+
+
+
+        /**
+         * Saves path of the current folder in the right format.
+         *
+         * @param $path
+         * The current path.
+         */
+
+		function path($path) {
+			$this->path = realpath(ROOT . $path);
 		}
-		
-		
-		
-		function init($params) {
-			foreach ($params as $key => $value) {
-				$this->$key = $value;
-			};
-		}
-		
-		
-		
-		function launch() {
-			$this->smarty->assign(
-				'filemaj',
-				array(
-					'content' => $this->parse(realpath(ROOT . $this->path))
-				)
-			);
-			return $this->smarty->fetch("filemaj/template.html");
-		}
-		// --------------------------------------------------------------
-		
-		
-		
-		
-		// main functions -----------------------------------------------
-		// receiving information about file
-		private function parse($path) {
+
+
+
+
+        /**
+         * Launches FileMAJ‘s work.
+         *
+         * @return string
+         * Returns a template of the FileMAJ‘s block.
+         */
+
+        function launch() {
+            // save in Smarty
+            $this->smarty->append($this->information['name'], ['folder' => $this->parse($this->path)], true);
+
+            // fetch a template
+            $template = $this->smarty->fetch("{$this->information['folder']}/template.html");
+
+            // delete an assignation
+            $this->smarty->clearAssign($this->information['name']);
+
+            return $template;
+        }
+
+
+
+
+        /**
+         * Initializes the list of types.
+         */
+
+        function types() {
+            $this->types = array(
+                'script' => array(
+                    'extension' => array('php', 'js'),
+                    'link' => false
+                ),
+                'template' => array(
+                    'extension' => array('html', 'xhtml', 'css'),
+                    'link' => false
+                ),
+                'archive' => array(
+                    'extension' => array('zip', 'rar'),
+                    'link' => true
+                ),
+                'text' => array(
+                    'extension' => array('txt', 'doc'),
+                    'link' => false
+                ),
+                'pdf' => array(
+                    'extension' => array('pdf'),
+                    'link' => true
+                ),
+                'jpg' => array(
+                    'extension' => array('jpg', 'jpeg'),
+                    'link' => true
+                ),
+                'gif' => array(
+                    'extension' => array('gif'),
+                    'link' => true
+                ),
+                'png' => array(
+                    'extension' => array('png'),
+                    'link' => true
+                )
+            );
+        }
+
+
+
+
+        /**
+         * Parses the directory into the beautiful array.
+         *
+         * @param $path
+         * The path in the right form.
+         *
+         * @return array
+         * An array with all information about the files.
+         */
+
+        private function parse($path) {
 			// scanning
 			$content = scandir($path);
 			
 			
-			// two arrays, that will merge in the end
+			// two arrays that will merge in the end
 			$folders = [];
 			$files = [];
 			
@@ -104,33 +152,58 @@
 					'path' => array(
 						'absolute' => $parent,
 						'relative' => substr($parent, strlen(ROOT)) ? str_replace('\\', '/', substr($parent, strlen(ROOT))) : '/',
-						'operations' => "/templates/" . self::operations . "/parent/"
+						'operations' => "/templates/{$this->information['folder']}/operations/parent/"
 					),
-					'logo' => "/templates/" . self::operations . "/parent/parent.png",
+					'logo' => "/templates/{$this->information['folder']}/operations/parent/parent.png",
 					'operations' => false
 				);
 			};
+
 			
-			// folders, two arrays are for normal counting
+			// first array is for folders, second array is for files
 			for ($i = 2, $k = 0, $size = count($content); $i < $size; $i++) {
 				$element = realpath("{$path}/{$content[$i]}");
-				if (is_dir($element)) $folders[] = $this->folder(realpath("{$path}/{$content[$i]}"), ++$k);
+				if (is_dir($element)) {
+                    $folders[] = array_merge(
+                        $this->folder(realpath("{$path}/{$content[$i]}")),
+                        ['number' => ++$k]
+                    );
+                };
 			};
 			
 			for ($i = 2, $k = 0, $size = count($content), $count = count($folders); $i < $size; $i++) {
 				$element = realpath("{$path}/{$content[$i]}");
-				if (!is_dir($element)) $files[] = $this->file(realpath("{$path}/{$content[$i]}"), ++$k + $count);
+				if (!is_dir($element)) {
+                    $files[] = array_merge(
+                        $this->file(realpath("{$path}/{$content[$i]}")),
+                        ['number' => ++$k + $count]
+                    );
+                };
 			};
 			
 			return array_merge($folders, $files);
 		}
-		
-		// receiving information about file
-		private function file($path, $number) {
-			$file = pathinfo($path);
 
-			// finding extension and type
-			$type = 'other'; $link = true;
+
+
+
+        /**
+         * Makes an array with the information about the file.
+         *
+         * @param $path
+         * Path to the file in the correct form.
+         *
+         * @return array
+         * Array with the information.
+         */
+
+        private function file($path) {
+			// get base info
+            $file = pathinfo($path);
+
+
+			// finding an extension and a type
+			$type = "other"; $link = true;
 			foreach ($this->types as $key => $value) {
 				if (in_array($file['extension'], $value['extension'])) {
 					$type = $key;
@@ -138,58 +211,79 @@
 					break;
 				};
 			};
-			
+
+
+            // form an array
 			$file = array_merge(
 				array(
-					'number' => $number,
 					'path' => array(
 						'absolute' => $path,
 						'relative' => str_replace('\\', '/', substr($path, strlen(ROOT))),
-						'operations' => "/templates/" . self::operations . "/$type/"
+						'operations' => "/templates/{$this->information['folder']}/operations/$type/"
 					),
 					'type' => $type,
 					'link' => $link,
-					'logo' => "/templates/" . self::operations . "/$type/$type.png"
+					'logo' => "/templates/{$this->information['folder']}/operations/$type/$type.png"
 				),
 				$file
 			);
-			
+
+
 			// add operation block (before I need to prepare Smarty codes)
-			$this->smarty->assign('file', $file);
-			$file['operations'] = $this->smarty->fetch(self::operations . "/$type/template.html");
-			$this->smarty->clearAssign('file');
+			$this->smarty->assign("file", $file);
+			$file['operations'] = $this->smarty->fetch("{$this->information['folder']}/operations/$type/template.html");
+            $this->smarty->clearAssign("file");
 			
 			return $file;
 		}
-		
-		// receiving information about folder
-		private function folder($path, $number) {
-			$folder = array(
-				'number' => $number,
+
+
+
+
+        /**
+         * Makes an array with the information about the folder.
+         *
+         * @param $path
+         * Path to the folder in the correct form.
+         *
+         * @return array
+         * Array with the information.
+         */
+
+        private function folder($path) {
+            // form an array
+            $folder = array(
 				'type' => 'folder',
 				'basename' => basename($path),
 				'path' => array(
 					'absolute' => $path,
 					'relative' => substr($path, strlen(ROOT)) ? str_replace('\\', '/', substr($path, strlen(ROOT))) : '/',
-					'operations' => "/templates/" . self::operations . "/folder/"
+					'operations' => "/templates/{$this->information['folder']}/operations/folder/"
 				),
-				'logo' => "/templates/" . self::operations . "/folder/folder.png"
+				'logo' => "/templates/{$this->information['folder']}/operations/folder/folder.png"
 			);
 			
 			// add operation block (before I need to prepare Smarty codes)
-			$this->smarty->assign('folder', $folder);
-			$folder['operations'] = $this->smarty->fetch(self::operations . "/folder/template.html");
-			$this->smarty->clearAssign('folder');
+			$this->smarty->assign("folder", $folder);
+			$folder['operations'] = $this->smarty->fetch("{$this->information['folder']}/operations/folder/template.html");
+            $this->smarty->clearAssign("folder");
 			
 			return $folder;
 		}
-		// --------------------------------------------------------------
-		
-		
-		
-		
-		// AJAX methods -------------------------------------------------
-		// change directory
+
+
+
+
+
+        /**
+         * AJAX
+         */
+
+
+
+
+
+        // change directory
 		function cd($data) {
 			$path = realpath(ROOT . $data->path);
 			if (!is_dir($path))	throw new Exception("No such directtory.", 0);
@@ -205,7 +299,7 @@
 			
 			
 			// save current directory path to Session
-			$_SESSION['filemaj'] = array(
+			$_SESSION['control']['filemaj'] = array(
 				'folder' => $data->path
 			);
 			
