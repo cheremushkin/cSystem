@@ -1,6 +1,6 @@
 <?php
 	/**
-	 * Class „Builder“ can instance and hold information about classes.
+	 * Class Builder can instance and hold information about classes.
 	 * It uses pattern „Singleton“.
 	 */
 	
@@ -47,7 +47,7 @@
 
             // get instance and check
             $instance = new $name();
-            if (!$instance instanceof Level) throw new Exception("Given class must implement interface “Level“.");
+            if (!$instance instanceof Level) throw new Exception("Given class must implement an interface ‘Level’.", 11);
 
 
             // also create an array in Smarty for this class
@@ -77,7 +77,7 @@
             $statement = $this->database->prepare("SELECT * FROM system_classes WHERE name = :name");
             $statement->bindValue(":name", $name); $statement->execute();
             $class = $statement->fetch(PDO::FETCH_ASSOC);
-            if (empty($class)) throw new Exception("Given class must be registered in database.");
+            if (empty($class)) throw new Exception("Given class must be registered in the database.", 12);
 
 			
 			// methods for Proxy

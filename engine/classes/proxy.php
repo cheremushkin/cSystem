@@ -54,7 +54,7 @@
 		// else this function will make an error
 		function create($class, $method) {
 			// finding method in the list
-			if (!in_array($method, $this->builder->information($class, "proxy"))) throw new Exception("Given method must be registered in database.");
+			if (!in_array($method, $this->builder->information($class, "proxy"))) throw new Exception("Given method must be registered in the database.", 21);
 
 			return $this->builder->build($class);
 		}

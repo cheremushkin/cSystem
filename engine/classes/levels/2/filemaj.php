@@ -68,12 +68,7 @@
             $this->smarty->append($this->information['name'], ['folder' => $this->parse($this->path)], true);
 
             // fetch a template
-            $template = $this->smarty->fetch("{$this->information['folder']}/template.html");
-
-            // delete an assignation
-            $this->smarty->clearAssign($this->information['name']);
-
-            return $template;
+            return $this->smarty->fetch("{$this->information['folder']}/template.html");
         }
 
 
@@ -283,78 +278,103 @@
 
 
 
-        // change directory
+        /**
+		 * Changes the directory.
+		 *
+		 * @param $data
+		 *
+		 * @return array
+		 *
+		 * @throws Exception
+		 * 201 — No such directory.
+		 */
+
 		function cd($data) {
 			$path = realpath(ROOT . $data->path);
-			if (!is_dir($path))	throw new Exception("No such directtory.", 0);
-			
-			
-			// saving Smarty codes
-			$this->smarty->assign(
-				'filemaj',
-				array(
-					'content' => $this->parse($path)
-				)
-			);
-			
-			
-			// save current directory path to Session
-			$_SESSION['control']['filemaj'] = array(
-				'folder' => $data->path
-			);
-			
+			if (!is_dir($path))	throw new Exception("No such directory.", 201);
+
+
+			// save in Smarty
+			$this->smarty->append($this->information['name'], ['folder' => $this->parse($path)], true);
+
+			// save current directory path in the session
+			$_SESSION['control']['filemaj'] = ['folder' => $data->path];
 			
 			return array(
-				'template' => $this->smarty->fetch("filemaj/template.html"),
-				'message' => "FileMAJ changed directory to $path.",
+				'template' => $this->smarty->fetch("{$this->information['folder']}/template.html"),
+				'message' => "FileMAJ changed directory. Path: $path.",
 				'code' => 200
 			);
 		}
-		
-		
-		
-		// get template with source code and information about file
+
+
+
+		/**
+		 * Gets template with the source code and information about the file.
+		 *
+		 * @param $data
+		 *
+		 * @return array
+		 *
+		 * @throws Exception
+		 * 202 — No such file.
+		 */
+
 		function getEditTemplate($data) {
 			$path = realpath(ROOT . $data->path);
-			if (!file_exists($path)) throw new Exception("No such file.");
-			
-			
-			// saving Smarty codes
+			if (!file_exists($path)) throw new Exception("No such file.", 202);
+
+
+			// save in Smarty
 			$this->smarty->assign(
-				'file',
+				"file",
 				array(
 					'path' => array(
 						'absolute' => $path,
 						'relative' => str_replace('\\', '/', substr($path, strlen(ROOT)))
 					),
-					'filesize' => number_format(filesize($path) / 1024, 2, '.', ''),
-					'filemtime' => date("F j, Y \i\\n G:i:s", filemtime($path)),
 					'source' => htmlspecialchars(file_get_contents($path))
 				)
 			);
+
+			// fetch a template
+			$template = $this->smarty->fetch("{$this->information['folder']}/views/edit.html");
+
+			// delete an assignation
+			$this->smarty->clearAssign("file");
 			
 			
 			return array(
-				'template' => $this->smarty->fetch('filemaj/views/edit.html'),
+				'template' => $template,
 				'message' => "File '$path' successfully opened for edit.",
 				'code' => 200
 			);
 		}
-		
-		
-		
-		// save source code
+
+
+
+		/**
+		 * Saves edited source code.
+		 *
+		 * @param $data
+		 *
+		 * @return array
+		 *
+		 * @throws Exception
+		 * 202 — No such file.
+		 * 202 — Error with writing in the file.
+		 */
+
 		function saveSourceCode($data) {
 			$path = realpath(ROOT . $data->path);
-			if (!file_exists($path)) throw new Exception("No such file ('$path').");
+			if (!file_exists($path)) throw new Exception("No such file.", 202);
 			
 			
 			// write in file
-			if (file_put_contents($path, $data->source) === false) throw new Exception("Error with writing in the file ('$path').");
-			
-			
+			if (file_put_contents($path, $data->source) === false) throw new Exception("Error with writing in the file.", 203);
+
 			return array(
-				'message' => "Changes has been successfully made in file ('$path').",
+				'message' => "Source code has successfully saved.",
 				'code' => 200
 			);
 		}

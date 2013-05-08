@@ -21,7 +21,7 @@
 		
 		function launch() {
             $id = empty($_GET['id']) ? NULL : $_GET['id'];
-            if (!$id) throw new Exception("Security code’s ID has given incorrectly.", 370);
+            if (!$id) throw new Exception("Security code’s ID has given incorrectly.", 101);
 
             $length = empty($_GET['length']) ? 4 : $_GET['length'];
 			$width = empty($_GET['width']) ? 125 : $_GET['width'];

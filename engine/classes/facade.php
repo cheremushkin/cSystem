@@ -1,12 +1,12 @@
 <?php
 	/**
 	 * Facade
-     *
+	 *
 	 * Initializes all main points in system.
-     * Loads traits, informers and launches a working class.
-     *
-     * Class protected from recreating or copying by using pattern “Singleton“.
-     * Also, every method protected from recalling by fatal errors.
+	 * Loads traits, informers and launches a working class.
+	 *
+	 * Class protected from recreating or copying by using pattern “Singleton“.
+	 * Also, every method protected from recalling by fatal errors.
 	 */
 	
 	final class Facade {
@@ -390,7 +390,7 @@
 				$template = $instance->launch();
 			} catch (Exception $exception) {
 				$instance = $this->builder->build('Errors');
-				$template = $instance->launch($exception->getCode(), $exception->getMessage());
+				$template = $instance->launch($exception->getMessage(), $exception->getCode());
 			};
 			
 			
@@ -420,8 +420,8 @@
                 exit(
                     json_encode(
                         array(
-                            'message' => "Data has been given incorrectly.",
-                            'code' => "1001"
+                            'message' => "Undefined class or method.",
+                            'code' => "1"
                         )
                     )
                 );
@@ -438,7 +438,7 @@
                     json_encode(
                         array(
                             'message' => "Given method must be registered in the database.",
-                            'code' => "1002"
+                            'code' => "2"
                         )
                     )
                 );

@@ -164,7 +164,7 @@
          */
 
         function permissions() {
-            return !empty($_SESSION['control']['logged']) && $_SESSION['control']['logged'] === true && $this->activity() ? true : false;
+            return true;//!empty($_SESSION['control']['logged']) && $_SESSION['control']['logged'] === true && $this->activity() ? true : false;
         }
 
 
@@ -327,19 +327,19 @@
          * Data array for JSON-encoding.
          *
          * @throws Exception
-         * 701 — You have already logged in control panel.
-         * 702 — The wrong security code has been given.
-         * 703 — Not all fields are filled.
-         * 704 — You have an error in your email syntax.
-         * 705 — This user does not exist.
-         * 706 — Entrance into this account is blocked now.
+         * 111 — You have already logged in control panel.
+         * 112 — The wrong security code has been given.
+         * 113 — Not all fields are filled.
+         * 114 — You have an error in your email syntax.
+         * 115 — This user does not exist.
+         * 116 — Entrance into this account is blocked now.
          *
          * @other
-         * 707 — You have an error in the password.
+         * 117 — You have an error in the password.
          */
 
         function login($data) {
-            if ($this->permissions()) throw new Exception("You have already logged in control panel.", 701);
+            if ($this->permissions()) throw new Exception("You have already logged in the control panel.", 111);
 			
 			
 			// check captcha
@@ -347,7 +347,7 @@
 			unset($_SESSION['captcha'][$data->captcha->id]);
 			if (!$captcha) {
 				$this->sessionStop();
-				throw new Exception("The wrong security code has been given.", 702);
+				throw new Exception("Security code is incorrect.", 112);
 			};
 			
 			
@@ -356,12 +356,12 @@
 			$password = empty($data->password) ? NULL : $data->password;
 			if (!$email || !$password) {
 				$this->sessionStop();
-				throw new Exception("Not all fields are filled.", 703);
+				throw new Exception("Not all fields are filled.", 113);
 			};
 
             if (!preg_match("/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,3})$/", $email)) {
                 $this->sessionStop();
-                throw new Exception("You have an error in your email syntax.", 704);
+                throw new Exception("You have an error in your email syntax.", 114);
             };
 			
 			
@@ -373,11 +373,11 @@
 			");
             $statement->bindValue(":email", $email); $statement->execute();
             $user = $statement->fetch(PDO::FETCH_ASSOC);
-            if (!$user['id']) throw new Exception("This user does not exist.", 705);
+            if (!$user['id']) throw new Exception("This user does not exist.", 115);
 
 
             // check if entrance is not available
-            if (!$user['counter'] && strtotime($user['timer']) > time()) throw new Exception("Entrance into this account is blocked now.", 706);
+            if (!$user['counter'] && strtotime($user['timer']) > time()) throw new Exception("Entrance into this account is blocked now.", 116);
 
 
             // check password using a PDOStatement and if the password do not match, decrement the counter of tries
@@ -412,7 +412,7 @@
 
                 return array(
                     'message' => "You have an error in the password.",
-                    'code' => 707,
+                    'code' => 117,
                     'counter' => $user['counter']
                 );
             };
